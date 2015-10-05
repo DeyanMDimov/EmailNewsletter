@@ -116,7 +116,10 @@
 
 			title: null,		// title string; only used when theme == true
 			draggable: true,	// only used when theme == true (requires jquery-ui.js to be loaded)
-
+			
+			unblockButton: true, //include button on block modal to unblock
+			unblockMsg: '<h4>Edit</h4>',
+			
 			theme: false, // set to true to use with jQuery UI themes
 
 			// styles for the message when blocking; if you wish to disable
@@ -407,6 +410,11 @@
 					lyr3.append(msg);
 				if (msg.jquery || msg.nodeType)
 					$(msg).show();
+			}
+			
+			// show the unblock button
+			if(opts.unblockButton){
+				lyr3.append(opts.unblockMsg);
 			}
 
 			if ((msie || opts.forceIframe) && opts.showOverlay)
