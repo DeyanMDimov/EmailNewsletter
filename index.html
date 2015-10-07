@@ -5,16 +5,13 @@
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title></title>
         <link rel="stylesheet"href="css/bootstrap.min.css">
-
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <!-- Place favicon.ico in the root directory -->
-
-        
-        
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.3.min.js"><\/script>')</script>
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.blockUI.js" type="text/javascript"></script>
+        <script src="js/code-blocks.js" type="text/javascript"></script>
         <script type="text/javascript"> 
         $( 
             
@@ -31,8 +28,8 @@
             
         var weekOf; 
         var numberOfMeetups;
-        var meetups;
-        var container = $('.container#main');
+        var meetups = [];
+        var container = $('.col-md-8#form');
         var setBlockingStyle = function(){
             var defaults = $.blockUI.defaults;
             defaults.overlayCSS = {
@@ -54,20 +51,31 @@
             defaults.centerY = false;
         }();
         
+        var meetup = function(name, event, date, address, description, id) {
+            this.group = name;
+            this.eventTitle = event;
+            this.eventDate= date;
+            this.eventAddress= address;
+            this.eventDesc= description;
+            this.id = id;
+            this.groupIcon= '';
+            this.completed = true;
+        };
+        
         var insertContainer = function(element){
             element.append($.el('div', {'class':'container-fluid'}));
             return element.children('.container-fluid');
-        }
+        };
         
         var insertRow = function(element){
             var row = $.el('div', {'class':'row'});
             element.append(row);
             return row;
-        }
+        };
         
         var insertInputRow = function(name, inputId, inputType){
             return [$.el('label', {'class':'control-label col-md-6'}, name), $.el('input', {'id':inputId, 'type': (inputType || 'text')})];
-        }
+        };
         
         var createMeetUpForm = function(rowNum, meetNum){
             
@@ -75,7 +83,7 @@
             if(meetUpRow.length==0)
             meetUpRow = $.el('div', {'class': 'row big-buffer', 'id': 'meet-ups'+rowNum});
             
-            var meetUpContainer = $.el('div', {'class':'col-md-4', 'id':"meet-up"+meetNum});
+            var meetUpContainer = $.el('div', {'class':'col-md-6', 'id':"meet-up"+meetNum});
             
             meetUpRow.append(meetUpContainer)
             container.append(meetUpRow);
@@ -99,10 +107,7 @@
         };
         
         $('#set-week').click(function() {
-            
             weekOf = $('#week-of').val();
-            console.log(weekOf);
-        
         });
         
         $('#add-meet-up').click(function() {
@@ -118,24 +123,65 @@
                     return false;
                 }
             }
+            
+           
         });
         
+        function submitMeetUp(meetNum){
+            var meetContainer  = $('#meet-up'+meetNum)[0];
+            
+            var groupName = $('#'+ meetContainer.id +' #group-name')[0].value;
+            var eventTitle = $('#'+ meetContainer.id +' #event-name')[0].value;
+            var eventDate = $('#'+ meetContainer.id +' #event-date')[0].value;
+            var eventDesc = $('#'+ meetContainer.id +' #event-desc')[0].value;
+            //block Form
+            $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
+            $('div#meet-up'+meetNum).block({message:"<h3>Completed</h3>"});
+            
+            
+            var submittedMeetUp = $.grep(meetups, function(e){return e.id == meetNum;});
+            if(submittedMeetUp.length == 0) {
+                submittedMeetUp = new meetup(groupName, eventTitle, eventDate, '', eventDesc, meetNum);
+                meetups.push(submittedMeetUp);
+            }
+            else{
+                submittedMeetUp.completed = true;
+            }
+           
+            
+        };
+        
+        function unsubmitMeetUp(meetNum){
+            var meetContainer  = $('#meet-up'+meetNum);
+            $('div#meet-up'+meetNum).unblock();
+            var selectedMeetUp = $.grep(meetups, function(e){ return e.id == meetNum; });
+            if(selectedMeetUp.length == 1){
+                selectedMeetUp[0].completed = false;
+            }
+        }
+        
+        function setWeeklyMessage(){
+            var enteredMessage = $('#weeklyMessage')[0].value;
+            var wholeMessage = "<p>Hey everyone,<br /><br />" + enteredMessage +"<br />,<br />Thanks and have a great week!<br />Deyan</p>";
+            console.log(wholeMessage);
+            return (enteredMessage.length > 0) ? wholeMessage : "";           
+        }
+        
         $('.container').on('click', '.meet-up-ready', function(){
-                var meetNum = this.id;
-                var meetContainer  = $('#meet-up'+meetNum);
-                $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
-                $('div#meet-up'+meetNum).block({message:"<h3>Completed</h3>"})
+            submitMeetUp(this.id);
             })
             .on('click', '.unblockBtn', function(){
-                var meetNum = this.id;
-                var meetContainer  = $('#meet-up'+meetNum);
-                $('div#meet-up'+meetNum).unblock();
-            })
+            unsubmitMeetUp(this.id);
+            });
             
-        
+        $('#generate-html').click(function(){
+            var previewContainer = $('#code-preview');
+            $.templateCode.weeklyMessage = setWeeklyMessage();
+            previewContainer.text(weekOf ? weekOf:$.templateCode.codeBlocks[0]);
+        }); 
         
        
-        })
+        });
         </script>
         <style>
             .top-buffer{margin-top: 10px;}
@@ -143,6 +189,9 @@
             
             .unblockBtn{font-weight: 300;
                         cursor: pointer;}
+            #code-preview{ margin-top: 20px;
+                           height: 800px;
+                           overflow: scroll;}
         </style>
     </head>
     <body>
@@ -154,22 +203,39 @@
         <div class="container" id="main">
         <h2>Meet Up Email Generator</h2>
         <div class="row">
-            <div class="col-md-6">
-            <h4>The Week Of</h4><input id="week-of" type="date" />
-            <button id="set-week" >Submit</button>
-            </div>
-        </div>
-        <div class="row top-buffer">
-            <div class="col-md-6">
+            <div class="col-md-8" id="form">
+                <div class="row"> 
+                    <div class="col-md-10">
+                    <h4>The Week Of</h4><input id="week-of" type="date" />
+                    <button id="set-week" >Submit</button>
+                    </div>
+                    <div class="col-md-2">
+                    <button id="generate-html">Generate</button>
+                    </div>
+                </div>
+                <div class="row top-buffer">
+                    <div class="col-md-6">
                 
-        <button id="add-meet-up">Add Meet-Up</button>
+                        <button id="add-meet-up">Add Meet-Up</button>
+                        <input type="text" id="weeklyMessage" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" id="preview">
+                <p class="form-control" id="code-preview">
+                    
+                </p>
             </div>
         </div>
+        
         
         
         </div>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.3.min.js"><\/script>')</script>
+        <script>
+            
+        </script>
     </body>
 </html>

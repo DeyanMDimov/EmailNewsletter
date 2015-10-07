@@ -1,0 +1,60 @@
+.event{
+        border: solid 1px #DDD;
+        padding-bottom: 10px !important;
+    }
+    .events-listings{
+          padding: 0 0px;
+         
+    }
+    .wmp-color{
+      background: #6E8FB8;
+    }
+    .event-description{
+      padding: 8px 10px 8px 10px !important;
+    }
+    .event-name{
+      padding: 0 10px 5px !important;
+      font-size:16px;
+      border-bottom: solid 2px #082952;
+    }
+    .event-header{
+      width: 100%;
+    }
+    .event-header tr{
+        padding-right: 13px;
+    }
+    .event-type{
+      font-size:13px;
+      padding: 10px 0 0 10px !important;
+      font-weight: bold;
+      width: 78%;
+    }
+    .event-group{
+      font-size:18px;
+      line-height: 20px;
+      padding: 3px 0 0px 10px !important;
+      font-weight: bold;
+      width: 78%;
+      text-transform:uppercase;
+    }
+    .event-date{
+      font-size:19px;
+      padding: 14px 13px 0 0px!important;
+     
+    }
+    .event-image{
+        padding:0px 10px !important;
+    }
+    .event-loc{
+        font-size:14px;
+        padding-top: 20px;
+    }
+    .event-loc span{
+        font-weight: bold;
+        font-size: 16px;
+        
+    }
+    .button tr{
+        padding: 0 25px; 
+        display: block;
+    }
