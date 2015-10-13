@@ -51,7 +51,7 @@
             defaults.centerY = false;
         }();
         
-        var meetup = function(name, event, date, address, description, id) {
+        var meetup = function(name, event, date, address, description, id, featured, featuredPerson, url) {
             this.group = name;
             this.eventTitle = event;
             this.eventDate= date;
@@ -60,6 +60,9 @@
             this.id = id;
             this.groupIcon= '';
             this.completed = true;
+            this.featured = featured;
+            this.featuredPerson = featuredPerson;
+            this.url = url;
         };
         
         var insertContainer = function(element){
@@ -100,10 +103,21 @@
                 row.append(insertInputRow('Event Date', 'event-date', 'date'));
                 
                 row = insertRow(meetUpContainer);
-                row.append(insertInputRow('Event Description', 'event-desc'));  
+                var eventDescriptionRow = insertInputRow('Event Description', 'event-desc');
+                eventDescriptionRow[1].css('height', "150px");
+                row.append(eventDescriptionRow);  
                 
                 row = insertRow(meetUpContainer);
-                row.append($.el('button', {'class':'meet-up-ready center-block', 'id':meetNum}, 'Submit'));    
+                row.append(insertInputRow('URL', 'url'));
+                
+                row = insertRow(meetUpContainer);
+                row.append(insertInputRow('Featured', 'featured', 'checkbox'));
+                
+                row = insertRow(meetUpContainer);
+                row.append(insertInputRow('Featured WMPer', 'featured-person', 'text'));
+                
+                row = insertRow(meetUpContainer);
+                row.append($.el('button', {'class':'meet-up-ready center-block top-buffer', 'id':meetNum}, 'Submit'));    
         };
         
         $('#set-week').click(function() {
@@ -160,7 +174,7 @@
             }
         }
         
-        function setWeeklyMessage(){
+        function getWeeklyMessage(){
             var enteredMessage = $('#weeklyMessage')[0].value;
             var wholeMessage = "<p>Hey everyone,<br /><br />" + enteredMessage +"<br />,<br />Thanks and have a great week!<br />Deyan</p>";
             console.log(wholeMessage);
@@ -176,8 +190,9 @@
             
         $('#generate-html').click(function(){
             var previewContainer = $('#code-preview');
-            $.templateCode.weeklyMessage = setWeeklyMessage();
+            $.templateCode.setWeeklyMessage(getWeeklyMessage());
             previewContainer.text(weekOf ? weekOf:$.templateCode.codeBlocks[0]);
+            $.templateCode.generateMeetUp('')
         }); 
         
        
@@ -192,6 +207,13 @@
             #code-preview{ margin-top: 20px;
                            height: 800px;
                            overflow: scroll;}
+           #add-meet-up{
+               margin-top: 20px;
+           }
+           #weeklyMessage{
+               width: 500px; 
+               height: 100px;
+           }
         </style>
     </head>
     <body>
@@ -214,10 +236,14 @@
                     </div>
                 </div>
                 <div class="row top-buffer">
+                    <div class="col-md-12">
+                        <h3>Weekly Message</h3>
+                         <textarea id="weeklyMessage"></textarea>
+                    </div>
                     <div class="col-md-6">
                 
-                        <button id="add-meet-up">Add Meet-Up</button>
-                        <input type="text" id="weeklyMessage" />
+                        <button id="add-meet-up" >Add Meet-Up</button><br /><br />
+                       
                     </div>
                 </div>
             </div>

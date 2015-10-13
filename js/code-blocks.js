@@ -7,11 +7,13 @@ var templateCode = function() {
   this.codeBlocks = [];
 
   this.weeklyMessage;
+  
+  var topBlock;
 	
-	
-	
+	this.setWeeklyMessage = function(msg){
+	this.weeklyMessage = msg;
  //topBlock goes from the top of the document up to where individual meet ups are listed, includes minified versions of TemplateStandard and TemplateCustom(custom rules for template) stylesheets.
-	var topBlock = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\
+	topBlock = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\
 <html xmlns="http://www.w3.org/1999/xhtml">\
 <head><title>Upcoming Events, Meet Ups, and Learning Opportunities</title><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="viewport" content="width=device-width"/><style>' +
 
@@ -35,14 +37,24 @@ var templateCode = function() {
             <table class="row"><tr><td class="center" align="center"><center>\
                  <table class="container"><tr><td><!-- content start -->\
                     <table class="row"><tr><td class="wrapper last">\
-                        <table class="twelve columns"><tr><td><h2 style="border-bottom: solid 3px #082952;">Upcoming Events and Meet Ups</h2>' + this.weeklyMessage + '</td><td class="expander"></td></tr></table>\
+                        <table class="twelve columns"><tr><td><h2 style="border-bottom: solid 3px #082952;">Upcoming Events and Meet Ups</h2></td><td class="expander"></td></tr></table>\
                     </td></tr></table>\
-              <br>  <!-- Break Tag for row -->';
-					
+              <br>  <!-- Break Tag for row -->\
+					<table class="row"><tbody><tr> <td>' + this.weeklyMessage + '</td></tr></tbody></table>';
 					this.codeBlocks.push(topBlock);
-          
+  };          
 	
 };
+
+function addMeetUp(meetUp){
+    
+}
+
+function generateMeetups(meetUpsList){
+    var featuredMeetUps = $.grep(meetUpsList, function(e){
+          return e.featured = true;
+    })
+}
 
 $.templateCode = new templateCode();
 });
