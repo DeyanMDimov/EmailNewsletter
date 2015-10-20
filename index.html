@@ -97,6 +97,9 @@
                 row.append(insertInputRow('Organizing Group', 'group-name'));
                 
                 row = insertRow(meetUpContainer);
+                row.append(insertInputRow('Event Type', 'event-type'));
+                
+                row = insertRow(meetUpContainer);
                 row.append(insertInputRow('Event Title', 'event-name'));
                 
                 row = insertRow(meetUpContainer);
@@ -111,10 +114,16 @@
                 row.append(insertInputRow('URL', 'url'));
                 
                 row = insertRow(meetUpContainer);
+                row.append(insertInputRow('Image URL', 'image-url'));
+                
+                row = insertRow(meetUpContainer);
                 row.append(insertInputRow('Featured', 'featured', 'checkbox'));
                 
                 row = insertRow(meetUpContainer);
                 row.append(insertInputRow('Featured WMPer', 'featured-person', 'text'));
+                
+                row = insertRow(meetUpContainer);
+                row.append(insertInputRow('Address', 'event-address', 'text'));
                 
                 row = insertRow(meetUpContainer);
                 row.append($.el('button', {'class':'meet-up-ready center-block top-buffer', 'id':meetNum}, 'Submit'));    
@@ -145,9 +154,14 @@
             var meetContainer  = $('#meet-up'+meetNum)[0];
             
             var groupName = $('#'+ meetContainer.id +' #group-name')[0].value;
+            var eventType = $('#'+ meetContainer.id +' #event-type')[0].value;
             var eventTitle = $('#'+ meetContainer.id +' #event-name')[0].value;
             var eventDate = $('#'+ meetContainer.id +' #event-date')[0].value;
             var eventDesc = $('#'+ meetContainer.id +' #event-desc')[0].value;
+            var eventMoreInfo = $('#'+ meetContainer.id +'#url')[0].value;
+            var eventFeatured = $('#'+ meetContainer.id +'#featured')[0].value;
+            var eventAddress = $('#' + meetContainer.id +'#event-address')[0].value;
+            var eventImage = $('#' + meetContainer.id +'#image-url')[0].value;
             //block Form
             $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
             $('div#meet-up'+meetNum).block({message:"<h3>Completed</h3>"});
@@ -191,7 +205,7 @@
         $('#generate-html').click(function(){
             var previewContainer = $('#code-preview');
             $.templateCode.setWeeklyMessage(getWeeklyMessage());
-            previewContainer.text(weekOf ? weekOf:$.templateCode.codeBlocks[0]);
+            previewContainer.text(weekOf ? weekOf:$.templateCode.htmlBlocks[0]);
             $.templateCode.generateMeetUp('')
         }); 
         
