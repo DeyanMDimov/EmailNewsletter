@@ -11,6 +11,7 @@ var templateCode = function() {
   var topBlock;
 	
 	this.setWeeklyMessage = function(msg){
+  this.htmlBlocks = [];
 	this.weeklyMessage = msg;
  //topBlock goes from the top of the document up to where individual meet ups are listed, includes minified versions of TemplateStandard and TemplateCustom(custom rules for template) stylesheets.
 	topBlock = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\
@@ -42,10 +43,49 @@ var templateCode = function() {
               <br>  <!-- Break Tag for row -->\
 					<table class="row"><tbody><tr> <td>' + this.weeklyMessage + '</td></tr></tbody></table>';
 					this.htmlBlocks.push(topBlock);
-  };          
+  };   
+  
+ this.generateMeetups = function(meetupsList){
+    var meetupCodeBlock = [];
+    
+    var featuredMeetups = $.grep(meetupsList, function(e){
+          return e.featured = true;
+    });
+    var regularMeetups = $.grep(meetupsList, function(e){
+          return e.featured = false;
+    });
+    var farOutMeetups = $.grep(meetupsList, function(e){
+          return e.date > 1;
+    });
+    if(featuredMeetups.length > 0){
+      meetupCodeBlock = addFeaturedHeader();
+      for( var i=0; (i*2) < featuredMeetups.length*2; i++){
+        var meetup1 = featuredMeetups[(i*2)];
+        var meetup2 = featuredMeetups[i*2+1] ? featuredMeetups[i*2] : null;
+        meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
+      }
+    }
+    if(regularMeetups.length > 0){//delete this if later
+      meetupCodeBlock.push(addRegularHeader());
+      for( var i=0; (i*2) <= regularMeetups.length*2; i++){
+        var meetup1 = regularMeetups[(i*2)];
+        var meetup2 = regularMeetups[i*2+1] ? regularMeetups[i*2] : null;
+        meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
+      }  
+    }//delete this if later
+    if(farOutMeetups.length>0){
+      meetupCodeBlock.push(addFarOutHeader());
+      for( var i=0; (i*2) <= farOutMeetups.length*2; i++){
+        var meetup1 = farOutMeetups[(i*2)];
+        var meetup2 = farOutMeetups[i*2+1] ? farOutMeetups[i*2] : null;
+        meetupCodeBlock += append(addMeetupRow(meetup1, meetup2));
+      }  
+    }
+    
+    this.htmlBlocks.push(meetupCodeBlock);
+}       
 	
-};
-
+  
 function addFeaturedHeader(){
   var htmlBlock = '<table class="row"><tr><td class="wrapper last"> \
                     <table class="twelve columns"><tr><td>\
@@ -55,48 +95,66 @@ function addFeaturedHeader(){
   return htmlBlock;
 }
 
-function addMeetUpRow(meetUp1, meetUp2){
+function addRegularHeader(){
+  var htmlBlock = '<table class="row"><tr><td class="wrapper last"> \
+                    <table class="twelve columns"><tr><td>\
+                      <h3 style="border-bottom: solid 3px #082952;">This Week</h3>\
+                    </td><td class="expander"></td></tr></table>\
+                  </td></tr></table>';
+  return htmlBlock;
+}
+
+function addFarOutHeader(){
+  var htmlBlock = '<table class="row"><tr><td class="wrapper last"> \
+                    <table class="twelve columns"><tr><td>\
+                      <h3 style="border-bottom: solid 3px #082952;">On the Horizon</h3>\
+                    </td><td class="expander"></td></tr></table>\
+                  </td></tr></table>';
+  return htmlBlock;
+}
+
+function addMeetupRow(meetup1, meetup2){
         
-    if(meetUp2.length == 1){
-        meetUp2.eventHeader = ' <table><tr>\
-                          <td class="event-type">'+ meetUp2.eventType + '</td>\
-                          <td class="event-date" rowspan="2">'+ meetUp2.eventDate + '&nbsp;</td>\
+    if(meetup2 != null){
+        meetup2.eventHeader = ' <table><tr>\
+                          <td class="event-type">'+ meetup2.eventType + '</td>\
+                          <td class="event-date" rowspan="2">'+ meetup2.eventDate + '&nbsp;</td>\
                         </tr></table>\
                         ';
-        meetUp2.eventImageAndLocation = '<td class="event-image"><img src="'+ meetUp2.eventImage + '" alt="Chicago .NET Mobile Developers" width="110" height="110" /></td>\
-        <td>'+ meetUp2.eventAddress + '</p></td>\
+        meetup2.eventImageAndLocation = '<td class="event-image"><img src="'+ meetup2.eventImage + '" alt="Chicago .NET Mobile Developers" width="110" height="110" /></td>\
+        <td>'+ meetup2.eventAddress + '</p></td>\
         ';
-        meetUp2.eventMoreInfo = '<a href="'+ meetUp2.url +'">Find out more</a>';
+        meetup2.eventMoreInfo = '<a href="'+ meetup2.url +'">Find out more</a>';
         
     }
     var htmlBlock = '<table class="row events-listings"><tr class="event-headers"><td class="wrapper">\
                       <table class="twelve columns"><tr><td class="event-header">\
                         <table><tr>\
-                          <td class="event-type">'+ meetUp1.eventType +'</td>\
-                          <td class="event-date" rowspan="2">'+ meetUp1.eventDate +'&nbsp;</td>\
+                          <td class="event-type">'+ meetup1.eventType +'</td>\
+                          <td class="event-date" rowspan="2">'+ meetup1.eventDate +'&nbsp;</td>\
                         </tr></table>\
                       </td>\
                       <td class="event-header">\
-                        ' + meetUp2.eventHeader + '\
+                        ' + (meetup2 ? meetup2.eventHeader:'') + '\
                       <td></tr></table>\
                     </td></tr>\
                     <tr>\
-                          <td class="event-group" >'+ meetUp1.groupName +'</td>\
-                          <td class="event-group" >'+ meetUp2.groupName +'</td>\
+                          <td class="event-group" >'+ meetup1.group +'</td>\
+                          <td class="event-group" >'+ (meetup2 ? meetup2.group:'') +'</td>\
                     </tr>\
                     <tr>\
-                          <td class="event-name"><span>'+ meetUp1.eventTitle+ '</span></td>\
-                          <td class="event-name"><span>'+ meetUp2.eventTitle+ '</span></td>\
+                          <td class="event-name"><span>'+ meetup1.eventTitle+ '</span></td>\
+                          <td class="event-name"><span>'+ (meetup2 ? meetup2.eventTitle:'')+ '</span></td>\
                     </tr>\
                     <tr>\
-                        <td class="event-image"><img src="'+ meetUp1.eventImage +'" width="110" height="110" /></td>\
-                        <td><p class="event-loc"><br /><span>'+meetUp1.eventDate +'</span> <br />'+meetUp1.EventAddress+'</p></td>\
-                        <td class="event-image"><img src="'+meetUp2.eventImage+'" alt="Chicago .NET Mobile Developers" width="110" height="110" /></td>\
-                        <td><p class="event-loc"><br /><span>'+meetUp2.eventDate+' </span> <br />'+meetUp2.EventAddress+'</p></td>\
+                        <td class="event-image"><img src="'+ meetup1.eventImage +'" width="110" height="110" /></td>\
+                        <td><p class="event-loc"><br /><span>'+meetup1.eventDate +'</span> <br />'+meetup1.EventAddress+'</p></td>\
+                        <td class="event-image"><img src="'+(meetup2 ? meetup2.eventImage:'')+'" alt="Chicago .NET Mobile Developers" width="110" height="110" /></td>\
+                        <td><p class="event-loc"><br /><span>'+(meetup2 ? meetup2.eventDate:'')+' </span> <br />'+(meetup2 ? meetup2.EventAddress:'')+'</p></td>\
                     </tr>\
                     <tr>\
-                        <td class="event-description">'+meetUp1.eventDesc+'</td>\
-                        <td class="event-description">'+meetUp2.eventDesc+'</td>\
+                        <td class="event-description">'+meetup1.eventDesc+'</td>\
+                        <td class="event-description">'+(meetup2 ? meetup2.eventDesc:'')+'</td>\
                     </tr>\
                     <tr>\
                         <td><a href="#">Find out more</a></td>\
@@ -108,29 +166,29 @@ function addMeetUpRow(meetUp1, meetUp2){
                     </tr></table>';
                        
                  
-               return htmlBlock;
-                          
+               return htmlBlock;                          
 }
 
-function generateMeetups(meetUpsList){
-    var meetUpCodeBlock;
-    
-    var featuredMeetUps = $.grep(meetUpsList, function(e){
-          return e.featured = true;
-    });
-    var regularMeetUps = $.grep(meetUpsList, function(e){
-          return e.featured = false;
-    });
-    if(featuredMeetUps.length > 0){
-      meetUpCodeBlock = addFeaturedHeader();
-      for( var i=1; (i*2) < featuredMeetUps.length; i++){
-        var meetUp1 = featuredMeetUps[(i*2)-1];
-        var meetUp2 = featuredMeetUps[i*2] ? featuredMeetUps[i*2] : null;
-        meetUpCodeBlock.push(addMeetUpRow(meetUp1, meetUp2));
-      }
-    }
-    
+this.templateClose = function(){
+  var htmlBlock = '</td></tr></table></table></center>\
+                  </td></tr></table><br><br>\
+                  <!-- Legal + Unsubscribe -->\
+                  <table class="row"><tr><td class="wrapper last">\
+                    <table class="twelve columns"><tr><td align="center"><center>\
+                      <p style="text-align:center;">&#169; 2015 West Monroe Partners, LLC </p>\
+                    </center></td><td class="expander"></td></tr></table>\
+                  </td></tr></table>\
+                  <!-- container end below -->\
+                  </td></tr></table>\
+                </center></td></tr></table>\
+              </body></html>'; 
+  return htmlBlock;
 }
+  
+};
+
+
+
 
 $.templateCode = new templateCode();
 });

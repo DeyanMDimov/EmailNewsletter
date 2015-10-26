@@ -80,53 +80,55 @@
             return [$.el('label', {'class':'control-label col-md-6'}, name), $.el('input', {'id':inputId, 'type': (inputType || 'text')})];
         };
         
-        var createMeetUpForm = function(rowNum, meetNum){
+        var createMeetupForm = function(rowNum, meetNum){
             
-            var meetUpRow = $('#meet-ups'+rowNum);
-            if(meetUpRow.length==0)
-            meetUpRow = $.el('div', {'class': 'row big-buffer', 'id': 'meet-ups'+rowNum});
+            var meetupRow = $('#meet-ups'+rowNum);
+            if(meetupRow.length==0)
+            meetupRow = $.el('div', {'class': 'row big-buffer', 'id': 'meet-ups'+rowNum});
             
-            var meetUpContainer = $.el('div', {'class':'col-md-6', 'id':"meet-up"+meetNum});
+            var meetupContainer = $.el('div', {'class':'col-md-6', 'id':"meet-up"+meetNum});
             
-            meetUpRow.append(meetUpContainer)
-            container.append(meetUpRow);
+            meetupRow.append(meetupContainer)
+            container.append(meetupRow);
             
-                meetUpContainer = insertContainer(meetUpContainer);
+                meetupContainer = insertContainer(meetupContainer);
             
-            var row = insertRow(meetUpContainer);
+            var row = insertRow(meetupContainer);
                 row.append(insertInputRow('Organizing Group', 'group-name'));
                 
-                row = insertRow(meetUpContainer);
+                row = insertRow(meetupContainer);
+                row.append($.el('button', {'class':'meet-up-ready center-block top-buffer', 'id':meetNum}, 'Submit'));  
+                
+                row = insertRow(meetupContainer);
                 row.append(insertInputRow('Event Type', 'event-type'));
                 
-                row = insertRow(meetUpContainer);
+                row = insertRow(meetupContainer);
                 row.append(insertInputRow('Event Title', 'event-name'));
                 
-                row = insertRow(meetUpContainer);
+                row = insertRow(meetupContainer);
                 row.append(insertInputRow('Event Date', 'event-date', 'date'));
                 
-                row = insertRow(meetUpContainer);
+                row = insertRow(meetupContainer);
                 var eventDescriptionRow = insertInputRow('Event Description', 'event-desc');
                 eventDescriptionRow[1].css('height', "150px");
                 row.append(eventDescriptionRow);  
                 
-                row = insertRow(meetUpContainer);
+                row = insertRow(meetupContainer);
                 row.append(insertInputRow('URL', 'url'));
                 
-                row = insertRow(meetUpContainer);
+                row = insertRow(meetupContainer);
                 row.append(insertInputRow('Image URL', 'image-url'));
                 
-                row = insertRow(meetUpContainer);
+                row = insertRow(meetupContainer);
                 row.append(insertInputRow('Featured', 'featured', 'checkbox'));
                 
-                row = insertRow(meetUpContainer);
+                row = insertRow(meetupContainer);
                 row.append(insertInputRow('Featured WMPer', 'featured-person', 'text'));
                 
-                row = insertRow(meetUpContainer);
+                row = insertRow(meetupContainer);
                 row.append(insertInputRow('Address', 'event-address', 'text'));
                 
-                row = insertRow(meetUpContainer);
-                row.append($.el('button', {'class':'meet-up-ready center-block top-buffer', 'id':meetNum}, 'Submit'));    
+                 
         };
         
         $('#set-week').click(function() {
@@ -136,13 +138,13 @@
         $('#add-meet-up').click(function() {
           
             for(i=1; i<10; i++){
-                var meetUpRow = $('#meet-ups'+i);
-                if(meetUpRow.length <= 0){
-                    createMeetUpForm(i, (i*2)-1);
+                var meetupRow = $('#meet-ups'+i);
+                if(meetupRow.length <= 0){
+                    createMeetupForm(i, (i*2)-1);
                     return false;
                 }
                 else if($('#meet-up'+(i*2)).length<=0){
-                    createMeetUpForm(i, i*2);
+                    createMeetupForm(i, i*2);
                     return false;
                 }
             }
@@ -150,7 +152,7 @@
            
         });
         
-        function submitMeetUp(meetNum){
+        function submitMeetup(meetNum){
             var meetContainer  = $('#meet-up'+meetNum)[0];
             
             var groupName = $('#'+ meetContainer.id +' #group-name')[0].value;
@@ -158,33 +160,33 @@
             var eventTitle = $('#'+ meetContainer.id +' #event-name')[0].value;
             var eventDate = $('#'+ meetContainer.id +' #event-date')[0].value;
             var eventDesc = $('#'+ meetContainer.id +' #event-desc')[0].value;
-            var eventMoreInfo = $('#'+ meetContainer.id +'#url')[0].value;
-            var eventFeatured = $('#'+ meetContainer.id +'#featured')[0].value;
-            var eventAddress = $('#' + meetContainer.id +'#event-address')[0].value;
-            var eventImage = $('#' + meetContainer.id +'#image-url')[0].value;
+            var eventMoreInfo = $('#'+ meetContainer.id +' #url')[0].value;
+            var eventFeatured = $('#'+ meetContainer.id +' #featured')[0].value;
+            var eventAddress = $('#' + meetContainer.id +' #event-address')[0].value;
+            var eventImage = $('#' + meetContainer.id +' #image-url')[0].value;
             //block Form
             $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
             $('div#meet-up'+meetNum).block({message:"<h3>Completed</h3>"});
             
             
-            var submittedMeetUp = $.grep(meetups, function(e){return e.id == meetNum;});
-            if(submittedMeetUp.length == 0) {
-                submittedMeetUp = new meetup(groupName, eventTitle, eventDate, '', eventDesc, meetNum);
-                meetups.push(submittedMeetUp);
+            var submittedMeetup = $.grep(meetups, function(e){return e.id == meetNum;});
+            if(submittedMeetup.length == 0) {
+                submittedMeetup = new meetup(groupName, eventTitle, eventDate, '', eventDesc, meetNum, eventFeatured, '', eventMoreInfo);
+                meetups.push(submittedMeetup);
             }
             else{
-                submittedMeetUp.completed = true;
+                submittedMeetup.completed = true;
             }
            
             
         };
         
-        function unsubmitMeetUp(meetNum){
+        function unsubmitMeetup(meetNum){
             var meetContainer  = $('#meet-up'+meetNum);
             $('div#meet-up'+meetNum).unblock();
-            var selectedMeetUp = $.grep(meetups, function(e){ return e.id == meetNum; });
-            if(selectedMeetUp.length == 1){
-                selectedMeetUp[0].completed = false;
+            var selectedMeetup = $.grep(meetups, function(e){ return e.id == meetNum; });
+            if(selectedMeetup.length == 1){
+                selectedMeetup[0].completed = false;
             }
         }
         
@@ -196,17 +198,26 @@
         }
         
         $('.container').on('click', '.meet-up-ready', function(){
-            submitMeetUp(this.id);
+            submitMeetup(this.id);
             })
             .on('click', '.unblockBtn', function(){
-            unsubmitMeetUp(this.id);
+            unsubmitMeetup(this.id);
             });
             
         $('#generate-html').click(function(){
             var previewContainer = $('#code-preview');
             $.templateCode.setWeeklyMessage(getWeeklyMessage());
-            previewContainer.text(weekOf ? weekOf:$.templateCode.htmlBlocks[0]);
-            $.templateCode.generateMeetUp('')
+            $.templateCode.generateMeetups($.grep(meetups, function(e){
+                return e.completed == true;
+            }));
+            $.templateCode.templateClose();
+            var htmlBlocks = $.templateCode.htmlBlocks;
+            var html='';
+            $.each(htmlBlocks, function(index, value){
+                html = html.concat(value);
+            });
+            previewContainer.text(weekOf ? weekOf:html);
+            
         }); 
         
        
