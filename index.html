@@ -51,14 +51,15 @@
             defaults.centerY = false;
         }();
         
-        var meetup = function(name, event, date, address, description, id, featured, featuredPerson, url) {
+        var meetup = function(name, event, eventType, date, address, description, id, featured, featuredPerson, url, eventImage) {
             this.group = name;
             this.eventTitle = event;
+            this.eventType = eventType;
             this.eventDate= date;
             this.eventAddress= address;
             this.eventDesc= description;
             this.id = id;
-            this.groupIcon= '';
+            this.groupIcon= eventImage;
             this.completed = true;
             this.featured = featured;
             this.featuredPerson = featuredPerson;
@@ -158,7 +159,7 @@
             var groupName = $('#'+ meetContainer.id +' #group-name')[0].value;
             var eventType = $('#'+ meetContainer.id +' #event-type')[0].value;
             var eventTitle = $('#'+ meetContainer.id +' #event-name')[0].value;
-            var eventDate = $('#'+ meetContainer.id +' #event-date')[0].value;
+            var eventDate = new Date($('#'+ meetContainer.id +' #event-date')[0].value);
             var eventDesc = $('#'+ meetContainer.id +' #event-desc')[0].value;
             var eventMoreInfo = $('#'+ meetContainer.id +' #url')[0].value;
             var eventFeatured = $('#'+ meetContainer.id +' #featured')[0].value;
@@ -171,7 +172,7 @@
             
             var submittedMeetup = $.grep(meetups, function(e){return e.id == meetNum;});
             if(submittedMeetup.length == 0) {
-                submittedMeetup = new meetup(groupName, eventTitle, eventDate, '', eventDesc, meetNum, eventFeatured, '', eventMoreInfo);
+                submittedMeetup = new meetup(groupName, eventTitle, eventType, eventDate, eventAddress, eventDesc, meetNum, eventFeatured, '', eventMoreInfo, eventImage);
                 meetups.push(submittedMeetup);
             }
             else{
@@ -216,7 +217,7 @@
             $.each(htmlBlocks, function(index, value){
                 html = html.concat(value);
             });
-            previewContainer.text(weekOf ? weekOf:html);
+            previewContainer.text(html);
             
         }); 
         

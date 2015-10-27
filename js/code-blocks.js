@@ -24,7 +24,7 @@ var templateCode = function() {
 +'</style><style>' +
 
 //Template Custom CSS
-'.event{border:1px solid #DDD;padding-bottom:10px!important}.events-listings{padding:0}.wmp-color{background:#6E8FB8}.event-description{padding:8px 10px!important}.event-name{padding:0 10px 5px!important;font-size:16px;border-bottom:solid 2px #082952}.event-header{width:100%}.event-group,.event-type{font-weight:700;width:78%}.event-header tr{padding-right:13px}.event-type{font-size:13px;padding:10px 0 0 10px!important}.event-group{font-size:18px;line-height:20px;padding:3px 0 0 10px!important;text-transform:uppercase}.event-date{font-size:19px;padding:14px 13px 0 0!important}.event-image{padding:0 10px!important}.event-loc{font-size:14px;padding-top:20px}.event-loc span{font-weight:700;font-size:16px}.button tr{padding:0 25px;display:block}' + 
+'.event{border:1px solid #DDD;padding-bottom:10px!important}.events-listings{padding:0}.events-listings .wrapper{padding-top:0}.wmp-color{background:#6E8FB8}.event-description{padding:8px 10px!important}.event-name{padding:4px 10px 5px!important;font-size:16px;border-bottom:solid 2px #082952}.event-header {padding-bottom:0;}.event-group,.event-type{font-weight:700;width:72%;text-transform:uppercase}.event-header table{padding-right:5px;border:solid #AAA!important;border-width:1px 1px 0 1px!important}.event-type{font-size:15px;padding:10px 0 0 10px!important}.event-group{width:50%;font-size:18px;line-height:20px;padding:3px 0 0 10px!important;text-transform:uppercase}.event-date{font-size:19px;padding:14px 13px 0 0!important; text-align:right}.event-image{padding:4px 10px!important}.event-loc{font-size:14px;padding-top:20px}.event-loc span{font-weight:700;font-size:16px}.meetup-left{width:50%;padding:0 5px!important}.meetup-right{width:50%;padding:0 5px!important}.meetup-left table,.meetup-right table {width:100%}.meetup-left div,.meetup-right div{width:100%; padding: 0 0 0 10px}.button tr{padding:0 25px;display:block}.event-group,.event-name,' + 
 
   '</style></head>\
 <body>\
@@ -128,42 +128,61 @@ function addMeetupRow(meetup1, meetup2){
         
     }
     var htmlBlock = '<table class="row events-listings"><tr class="event-headers"><td class="wrapper">\
-                      <table class="twelve columns"><tr><td class="event-header">\
+                      <table class="twelve columns"><tr><td class="event-header meetup-left">\
                         <table><tr>\
                           <td class="event-type">'+ meetup1.eventType +'</td>\
-                          <td class="event-date" rowspan="2">'+ meetup1.eventDate +'&nbsp;</td>\
+                          <td class="event-date" rowspan="2">'+meetup1.eventDate.getMonth()+'/'+meetup1.eventDate.getDate() +'&nbsp;\
+                          </td></tr>\
+                    	    <tr><td style="height:5px;"></td>\
                         </tr></table>\
                       </td>\
-                      <td class="event-header">\
-                        ' + (meetup2 ? meetup2.eventHeader:'') + '\
+                      <td class="event-header meetup-right">\
+                        ' + (meetup2 ? meetup2.eventHeader:'&nbsp;') + '\
                       <td></tr></table>\
+                      </td></tr>\
+                      <tr class="event-group-names"><td class="wrapper">\
+                        <table class="twelve columns"><tr>\
+                          <td class="event-group meetup-left" ><p>'+ meetup1.group +'</p></td>\
+                          <td class="event-group meetup-right" ><p>'+ (meetup2 ? meetup2.group:'&nbsp;') +'</p></td>\
+                      </tr></table>\
                     </td></tr>\
-                    <tr>\
-                          <td class="event-group" >'+ meetup1.group +'</td>\
-                          <td class="event-group" >'+ (meetup2 ? meetup2.group:'') +'</td>\
-                    </tr>\
-                    <tr>\
-                          <td class="event-name"><span>'+ meetup1.eventTitle+ '</span></td>\
-                          <td class="event-name"><span>'+ (meetup2 ? meetup2.eventTitle:'')+ '</span></td>\
-                    </tr>\
-                    <tr>\
-                        <td class="event-image"><img src="'+ meetup1.eventImage +'" width="110" height="110" /></td>\
-                        <td><p class="event-loc"><br /><span>'+meetup1.eventDate +'</span> <br />'+meetup1.EventAddress+'</p></td>\
-                        <td class="event-image"><img src="'+(meetup2 ? meetup2.eventImage:'')+'" alt="Chicago .NET Mobile Developers" width="110" height="110" /></td>\
-                        <td><p class="event-loc"><br /><span>'+(meetup2 ? meetup2.eventDate:'')+' </span> <br />'+(meetup2 ? meetup2.EventAddress:'')+'</p></td>\
-                    </tr>\
-                    <tr>\
-                        <td class="event-description">'+meetup1.eventDesc+'</td>\
-                        <td class="event-description">'+(meetup2 ? meetup2.eventDesc:'')+'</td>\
-                    </tr>\
-                    <tr>\
-                        <td><a href="#">Find out more</a></td>\
-                        <td><a href="#">Find out more</a></td>\
-                    </tr>\
-                    <tr>\
-                      <td class="expander"></td>\
-                      <td class="expander"></td>\
-                    </tr></table>';
+                    <tr class="event-names"><td class="wrapper">\
+                      <table class="twelve columns"><tr>\
+                          <td class="event-name meetup-left"><span>'+ meetup1.eventTitle+ '</span></td>\
+                          <td class="event-name meetup-right"><span>'+ (meetup2 ? meetup2.eventTitle:'&nbsp;')+ '</span></td>\
+                      </tr></table>\
+                    </td></tr>\
+                    <tr class="event-images"><td class="wrapper">\
+                      <table class="twelve columns"><tr><td class="meetup-left">\
+                        <table><tr>\
+                          <td class="event-image"><img src="'+ meetup1.groupIcon +'" width="110" height="110" /></td>\
+                          <td><p class="event-loc"><br /><span>'+meetup1.eventDate.getMonth()+'/'+meetup1.eventDate.getDay() +'</span> <br />'+meetup1.EventAddress+'</p></td>\
+                        </tr></table>\
+                      </td><td class="meetup-right">\
+                        <table></tr>\
+                          <td class="event-image">'+(meetup2 ? '<img src="'+ meetup2.groupIcon+'" alt="Chicago .NET Mobile Developers" width="110" height="110" />':'&nbsp;')+'</td>\
+                          <td><p class="event-loc"><br /><span>'+(meetup2 ? meetup2.eventDate:'&nbsp;')+' </span> <br />'+(meetup2 ? meetup2.EventAddress:'')+'</p></td>\
+                        </tr></table>\
+                      </td></tr></table>\
+                    </td></tr>\
+                    <tr class="event-descriptions"><td class="wrapper">\
+                      <table class="twelve columns"><tr>\
+                        <td class="event-description meetup-left">'+meetup1.eventDesc+'</td>\
+                        <td class="event-description meetup-right">'+(meetup2 ? meetup2.eventDesc:'&nbsp;')+'</td>\
+                      </tr></table>\
+                    </td></tr>\
+                    <tr class="event-links"><td class="wrapper">\
+                      <table class="twelve columns"><tr>\
+                        <td class="event-link meetup-left"><a href="'+meetup1.url+'">Find out more</a></td>\
+                        <td class="event-link meetup-right">'+(meetup2 ? '<a href="'+meetup2.url+'">Find out more</a>' : '') + '</td>\
+                      </tr></table>\
+                    </td></tr>\
+                    <tr class="event-spacers"><td class="wrapper">\
+                      <table class="twelve columns"><tr>\
+                        <td class="expander meetup-left"></td>\
+                        <td class="expander meetup-right"></td>\
+                      </tr></table>\
+                   </td></tr></table>';
                        
                  
                return htmlBlock;                          
@@ -182,8 +201,8 @@ this.templateClose = function(){
                   </td></tr></table>\
                 </center></td></tr></table>\
               </body></html>'; 
-  return htmlBlock;
-}
+  this.htmlBlocks.push(htmlBlock);
+};
   
 };
 
