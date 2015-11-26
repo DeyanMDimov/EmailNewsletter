@@ -95,6 +95,9 @@
                 meetupContainer = insertContainer(meetupContainer);
             
             var row = insertRow(meetupContainer);
+                row.append($.el('h2',  {'class':'meetupNum'}, meetNum));
+            
+                row = insertRow(meetupContainer);
                 row.append(insertInputRow('Organizing Group', 'group-name'));
                 
                 row = insertRow(meetupContainer);
@@ -108,6 +111,9 @@
                 
                 row = insertRow(meetupContainer);
                 row.append(insertInputRow('Event Date', 'event-date', 'date'));
+                
+                row = insertRow(meetupContainer);
+                row.append(insertInputRow('Event Time', 'event-time'));
                 
                 row = insertRow(meetupContainer);
                 var eventDescriptionRow = insertInputRow('Event Description', 'event-desc');
@@ -164,19 +170,27 @@
             var eventMoreInfo = $('#'+ meetContainer.id +' #url')[0].value;
             var eventFeatured = $('#'+ meetContainer.id +' #featured')[0].value;
             var eventAddress = $('#' + meetContainer.id +' #event-address')[0].value;
-            var eventImage = $('#' + meetContainer.id +' #image-url')[0].value;
+            var eventImage = $('#' + meetContainer.id +' #image-url')[0].value; 
+            var eventTime = $('#' + meetContainer.id +' #event-time')[0].value; 
+            var daysOfWeek =  ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            
+            
             //block Form
             $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
             $('div#meet-up'+meetNum).block({message:"<h3>Completed</h3>"});
             
+            var submittedNewMeetup = new meetup(groupName, eventTitle, eventType, eventDate, eventAddress, eventDesc, meetNum, eventFeatured, '', eventMoreInfo, eventImage);
+            submittedNewMeetup.daysOfWeek = daysOfWeek;
+            submittedNewMeetup.time = eventTime;
+            
             
             var submittedMeetup = $.grep(meetups, function(e){return e.id == meetNum;});
             if(submittedMeetup.length == 0) {
-                submittedMeetup = new meetup(groupName, eventTitle, eventType, eventDate, eventAddress, eventDesc, meetNum, eventFeatured, '', eventMoreInfo, eventImage);
-                meetups.push(submittedMeetup);
+                meetups.push(submittedNewMeetup);
             }
             else{
-                submittedMeetup.completed = true;
+               
+                meetups[submittedNewMeetup.id - 1] = submittedNewMeetup;
             }
            
             
@@ -192,8 +206,8 @@
         }
         
         function getWeeklyMessage(){
-            var enteredMessage = $('#weeklyMessage')[0].value;
-            var wholeMessage = "<p>Hey everyone,<br /><br />" + enteredMessage +"<br />,<br />Thanks and have a great week!<br />Deyan</p>";
+            var enteredMessage = 'This week there are meet-ups centered around Sharepoint, Agile Development, Swift, and Behavior Driven Development! Check them out below and please make sure to let me know if you plan on attending! Next week there will only be one networking event but beyond that, you can make plan’s for the Chicago Agile Methodology Group’s meetup, headed by our own Dave Babicz! As always, send me any relevant upcoming events you’d like to see on this newsletter! ';//$('#weeklyMessage')[0].value;
+            var wholeMessage = "Hey everyone,<br /><br />" + enteredMessage +"<br /><br />Thanks and have a great week!<br />Deyan";
             console.log(wholeMessage);
             return (enteredMessage.length > 0) ? wholeMessage : "";           
         }
