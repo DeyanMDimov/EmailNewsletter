@@ -110,13 +110,14 @@ var templateCode = function() {
     var meetupCodeBlock = [];
     
     var featuredMeetups = $.grep(meetupsList, function(e){
-          return e.featured = true;
+          return e.featured == true && e.farOut == false;
     });
+    
     var regularMeetups = $.grep(meetupsList, function(e){
-          return e.featured = false;
+          return e.featured == false && e.farOut == false;
     });
     var farOutMeetups = $.grep(meetupsList, function(e){
-          return e.date > 1;
+          return e.farOut == true;
     });
     if(featuredMeetups.length > 0){
       meetupCodeBlock = addFeaturedHeader();
@@ -127,7 +128,7 @@ var templateCode = function() {
       }
     }
     if(regularMeetups.length > 0){//delete this if later
-      meetupCodeBlock.push(addRegularHeader());
+      meetupCodeBlock += addRegularHeader();
       for( var i=0; (i*2) <= regularMeetups.length; i++){
         var meetup1 = regularMeetups[(i*2)];
         var meetup2 = regularMeetups[i*2+1] ? regularMeetups[i*2+1] : null;
@@ -135,11 +136,11 @@ var templateCode = function() {
       }  
     }//delete this if later
     if(farOutMeetups.length>0){
-      meetupCodeBlock.push(addFarOutHeader());
+      meetupCodeBlock += addFarOutHeader();
       for( var i=0; (i*2) <= farOutMeetups.length; i++){
         var meetup1 = farOutMeetups[(i*2)];
         var meetup2 = farOutMeetups[i*2+1] ? farOutMeetups[i*2+1] : null;
-        meetupCodeBlock += append(addMeetupRow(meetup1, meetup2));
+        meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
       }  
     }
     
@@ -148,7 +149,7 @@ var templateCode = function() {
 	
   
 function addFeaturedHeader(){
-  var htmlBlock = '<table class="row"><tr><td class="wrapper last"> \
+  var htmlBlock = '<table class="row"><tr><td class="wrapper last"><tr><td> \
                     <table class="twelve columns"><tr><td>\
                       <h4 class="subtitle" style="border-bottom: solid 3px #082952;">Featured Meet Ups</h4>\
                     </td><td class="expander"></td></tr></table>\
@@ -157,7 +158,7 @@ function addFeaturedHeader(){
 }
 
 function addRegularHeader(){
-  var htmlBlock = '<table class="row"><tr><td class="wrapper last"> \
+  var htmlBlock = '<table class="row"><tr><td class="wrapper last"><tr><td>\
                     <table class="twelve columns"><tr><td>\
                       <h4 class="subtitle" style="border-bottom: solid 3px #082952;">This Week</h4>\
                     </td><td class="expander"></td></tr></table>\
@@ -166,7 +167,7 @@ function addRegularHeader(){
 }
 
 function addFarOutHeader(){
-  var htmlBlock = '<table class="row"><tr><td class="wrapper last"> \
+  var htmlBlock = '<table class="row"><tr><td class="wrapper last"><tr><td>  \
                     <table class="twelve columns"><tr><td>\
                       <h4 class="subtitle" style="border-bottom: solid 3px #082952;">On the Horizon</h4>\
                     </td><td class="expander"></td></tr></table>\
@@ -218,7 +219,8 @@ function addMeetupRow(meetup1, meetup2){
                                 <table>\
                                   <tr>\
                                     <td class="event-description">\
-                                        ' +meetup1.eventDesc+ '\
+                                        ' +meetup1.eventDesc+ 
+                                        (meetup1.featured ? '<br /><br /><b>Featured WMP Member:</b> ' + meetup1.featuredPerson : '') + '\
                                     </td>\
                                   </tr>\
                                 </table>\
@@ -263,7 +265,8 @@ function addMeetupRow(meetup1, meetup2){
                                 <table>\
                                   <tr>\
                                     <td class="event-description">\
-                                        ' +meetup2.eventDesc+ '\
+                                        ' +meetup2.eventDesc+ 
+                                        (meetup2.featured ? '<br /><br /><b>Featured WMP Member:</b> ' + meetup2.featuredPerson : '') + '\
                                     </td>\
                                   </tr>\
                                 </table>\
@@ -277,10 +280,10 @@ function addMeetupRow(meetup1, meetup2){
                               </td>\
                               <td class="expander"></td>\
                             </tr>\
-                          </table>\
-                        </td>\
+                          </table>')+
+                        '</td>\
                       </tr>\
-                    </table>');
+                    </table>';
     
     
   /*  '<table class="row events-listings"><tr class="event-headers"><td class="wrapper">\

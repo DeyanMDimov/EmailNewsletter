@@ -64,6 +64,41 @@
             this.featured = featured;
             this.featuredPerson = featuredPerson;
             this.url = url;
+            this.farOut = checkFarOut(weekOf, date);
+        };
+        
+        var checkFarOut = function(weekDate, meetupDate){
+            weekDate = new Date(weekDate);
+            var weekDateNumber = weekDate.getDate()+1;
+            var meetupDateNumber = meetupDate.getDate()+1;
+            var longMonths = [1,3,5,7,8,10,12];
+            if(weekDateNumber+7 > meetupDateNumber ){
+                //console.log(weekDate.getMonth()+1);
+                if(weekDateNumber <= meetupDateNumber){
+                    return false;
+                }
+                else{
+                    if(longMonths.indexOf(weekDate.getMonth()+1) != -1 ){
+                        if(meetupDateNumber < weekDateNumber+7-31){
+                            return false;
+                        }
+                        else{return true;}
+                    }
+                    else if(longMonths.indexOf(weekDate.getMonth()+1) == -1 && weekDate.getMonth()+1 != 2){
+                        if(meetupDateNumber < weekDateNumber+7-30){
+                            return false;
+                        }
+                        else{return true;}
+                    }
+                    else{
+                        if(meetupDateNumber < weekDateNumber+7-28){
+                            return false;
+                        }
+                        else{return true;}
+                    }
+                }
+            }
+            else{ return true;}
         };
         
         var insertContainer = function(element){
@@ -105,6 +140,7 @@
                 
                 row = insertRow(meetupContainer);
                 row.append(insertInputRow('Event Type', 'event-type'));
+                $('#meet-up' + meetNum +' #event-type')[0].value = "Meet-up";
                 
                 row = insertRow(meetupContainer);
                 row.append(insertInputRow('Event Title', 'event-name'));
@@ -168,7 +204,8 @@
             var eventDate = new Date($('#'+ meetContainer.id +' #event-date')[0].value);
             var eventDesc = $('#'+ meetContainer.id +' #event-desc')[0].value;
             var eventMoreInfo = $('#'+ meetContainer.id +' #url')[0].value;
-            var eventFeatured = $('#'+ meetContainer.id +' #featured')[0].value;
+            var eventFeatured = $('#'+ meetContainer.id +' #featured')[0].checked;
+            var eventFeaturedPerson = $('#'+ meetContainer.id +' #featured-person')[0].value;
             var eventAddress = $('#' + meetContainer.id +' #event-address')[0].value;
             var eventImage = $('#' + meetContainer.id +' #image-url')[0].value; 
             var eventTime = $('#' + meetContainer.id +' #event-time')[0].value; 
@@ -179,7 +216,7 @@
             $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
             $('div#meet-up'+meetNum).block({message:"<h3>Completed</h3>"});
             
-            var submittedNewMeetup = new meetup(groupName, eventTitle, eventType, eventDate, eventAddress, eventDesc, meetNum, eventFeatured, '', eventMoreInfo, eventImage);
+            var submittedNewMeetup = new meetup(groupName, eventTitle, eventType, eventDate, eventAddress, eventDesc, meetNum, eventFeatured, eventFeaturedPerson, eventMoreInfo, eventImage);
             submittedNewMeetup.daysOfWeek = daysOfWeek;
             submittedNewMeetup.time = eventTime;
             
@@ -206,9 +243,9 @@
         }
         
         function getWeeklyMessage(){
-            var enteredMessage = 'This week there are meet-ups centered around Sharepoint, Agile Development, Swift, and Behavior Driven Development! Check them out below and please make sure to let me know if you plan on attending! Next week there will only be one networking event but beyond that, you can make plan’s for the Chicago Agile Methodology Group’s meetup, headed by our own Dave Babicz! As always, send me any relevant upcoming events you’d like to see on this newsletter! ';//$('#weeklyMessage')[0].value;
+            var enteredMessage = $('#weeklyMessage')[0].value;
             var wholeMessage = "Hey everyone,<br /><br />" + enteredMessage +"<br /><br />Thanks and have a great week!<br />Deyan";
-            console.log(wholeMessage);
+            //console.log(wholeMessage);
             return (enteredMessage.length > 0) ? wholeMessage : "";           
         }
         
