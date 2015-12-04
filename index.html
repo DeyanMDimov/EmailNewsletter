@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
         <title></title>
-        <link rel="stylesheet"href="css/bootstrap.min.css">
+        <link rel="stylesheet"href="css/bootstrap.css">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <!-- Place favicon.ico in the root directory -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -29,7 +29,7 @@
         var weekOf; 
         var numberOfMeetups;
         var meetups = [];
-        var container = $('.col-md-8#form');
+        var container = $('.col-md-12#form');
         var setBlockingStyle = function(){
             var defaults = $.blockUI.defaults;
             defaults.overlayCSS = {
@@ -122,7 +122,7 @@
             if(meetupRow.length==0)
             meetupRow = $.el('div', {'class': 'row big-buffer', 'id': 'meet-ups'+rowNum});
             
-            var meetupContainer = $.el('div', {'class':'col-md-6', 'id':"meet-up"+meetNum});
+            var meetupContainer = $.el('div', {'class':'col-md-6 meetup', 'id':"meet-up"+meetNum});
             
             meetupRow.append(meetupContainer)
             container.append(meetupRow);
@@ -130,17 +130,14 @@
                 meetupContainer = insertContainer(meetupContainer);
             
             var row = insertRow(meetupContainer);
-                row.append($.el('h2',  {'class':'meetupNum'}, meetNum));
+                row.append($.el('h2',  {'class':'meetupNum'}, meetNum+'.'));
             
                 row = insertRow(meetupContainer);
                 row.append(insertInputRow('Organizing Group', 'group-name'));
                 
                 row = insertRow(meetupContainer);
-                row.append($.el('button', {'class':'meet-up-ready center-block top-buffer', 'id':meetNum}, 'Submit'));  
-                
-                row = insertRow(meetupContainer);
                 row.append(insertInputRow('Event Type', 'event-type'));
-                $('#meet-up' + meetNum +' #event-type')[0].value = "Meet-up";
+                $('#meet-up' + meetNum +' #event-type')[0].value = "Meetup";
                 
                 row = insertRow(meetupContainer);
                 row.append(insertInputRow('Event Title', 'event-name'));
@@ -170,6 +167,9 @@
                 
                 row = insertRow(meetupContainer);
                 row.append(insertInputRow('Address', 'event-address', 'text'));
+                
+                row = insertRow(meetupContainer);
+                row.append($.el('button', {'class':'meet-up-ready center-block top-buffer', 'id':meetNum}, 'Submit'));  
                 
                  
         };
@@ -256,6 +256,8 @@
             unsubmitMeetup(this.id);
             });
             
+        $(document).on('click', '#code-preview', function(){ selectText('code-preview'); });    
+        
         $('#generate-html').click(function(){
             var previewContainer = $('#code-preview');
             $.templateCode.setWeeklyMessage(getWeeklyMessage());
@@ -272,25 +274,101 @@
             
         }); 
         
+        function selectText(element) {
+            var doc = document
+                , text = doc.getElementById(element)
+                , range, selection
+            ;    
+            if (doc.body.createTextRange) {
+                range = document.body.createTextRange();
+                range.moveToElementText(text);
+                range.select();
+            } else if (window.getSelection) {
+                selection = window.getSelection();        
+                range = document.createRange();
+                range.selectNodeContents(text);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+        
        
         });
         </script>
         <style>
+            .form-title{
+                background-color: #082952;
+                color: #FFB91C;
+            }
+            .form-title span{
+                color: #EEE;
+            }
+            #main{
+                margin-top: 0px;
+            }
+            #week{
+                display:inline-block;
+                padding: 0 30px 0  0;
+            }
+            #week-of{visibility: hidden; display:none;}
+            #set-week{
+                margin-top: 30px;
+                padding: 5px 5px 5px 5px;
+                background: none;
+                color: #ccc;
+                font-size:12px;
+                float:right;
+            }
+            #set-week:hover{
+                color:#999;
+            }
+            .input-style{
+                border: none;
+                background-color: #BDC3C7;
+            }
+            .input-style:focus{
+                background-color:#ECF0F1;
+                border-style: none;
+                border-color: Transparent;
+            }
+            
+            #weeklyMsg-title{
+                margin-bottom:5px;
+                margin-top:5px;
+                padding-left:1px;
+            }
+            
+             #weeklyMessage{
+               width: 100%; 
+               height: 100px;
+            }
             .top-buffer{margin-top: 10px;}
             .big-buffer{margin-top: 25px;}
             
+            
+            
             .unblockBtn{font-weight: 300;
                         cursor: pointer;}
+            #add-meet-up{
+                margin-top: 10px;
+                font-size: 20px;
+                background: solid;
+                background-color:#EAEAEA;
+                border: none;
+                padding: 9px 24px 6px 13px;
+                
+            }
+            .meetup .container-fluid{
+                background-color:#34495e; 
+                color:#fff;
+            }
             #code-preview{ margin-top: 20px;
                            height: 800px;
-                           overflow: scroll;}
-           #add-meet-up{
-               margin-top: 20px;
-           }
-           #weeklyMessage{
-               width: 500px; 
-               height: 100px;
-           }
+                           overflow: scroll;
+            }
+            
+           
+            
         </style>
     </head>
     <body>
@@ -299,32 +377,40 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
+        <div class="form-title">
+            <div class="container">
+                <h2><span>Meetup Email</span> Generator</h2>
+            </div>
+        </div>
+            
         <div class="container" id="main">
-        <h2>Meet Up Email Generator</h2>
+        
         <div class="row">
-            <div class="col-md-8" id="form">
+            <div class="col-md-12 container" id="form">
                 <div class="row"> 
-                    <div class="col-md-10">
-                    <h4>The Week Of</h4><input id="week-of" type="date" />
-                    <button id="set-week" >Submit</button>
+                    <div class="col-md-4">
+                        <h2 id="week">The Week Of</h2><input id="week-of" type="date" />
+                        <a id="set-week" class="btn btn-sm">Edit</a>
                     </div>
-                    <div class="col-md-2">
-                    <button id="generate-html">Generate</button>
+                    <div class=col-md-2">
+                        <!--<button id="generate-html">Generate</button>-->
                     </div>
                 </div>
                 <div class="row top-buffer">
-                    <div class="col-md-12">
-                        <h3>Weekly Message</h3>
-                         <textarea id="weeklyMessage"></textarea>
+                    <div class="col-md-8">
+                        <h3 id="weeklyMsg-title">Weekly Message</h3>
+                         <textarea id="weeklyMessage" class="input-style"></textarea>
                     </div>
-                    <div class="col-md-6">
+                 </div>
+                 <div class="row">
+                    <div class="col-md-4">
                 
-                        <button id="add-meet-up" >Add Meet-Up</button><br /><br />
+                        <button id="add-meet-up" class="btn  center-block"" >Add Meet-Up</button><br /><br />
                        
                     </div>
                 </div>
             </div>
-            <div class="col-md-4" id="preview">
+            <div class="col-md-10" id="preview">
                 <p class="form-control" id="code-preview">
                     
                 </p>
