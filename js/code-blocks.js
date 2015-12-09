@@ -108,6 +108,9 @@ var templateCode = function() {
   
  this.generateMeetups = function(meetupsList){
     var meetupCodeBlock = [];
+    meetupsList = $.grep(meetupsList, function(e){
+        return e.completed == true;
+    });
     
     var featuredMeetups = $.grep(meetupsList, function(e){
           return e.featured == true && e.farOut == false;
@@ -130,7 +133,7 @@ var templateCode = function() {
     if(regularMeetups.length > 0){//delete this if later
       meetupCodeBlock += addRegularHeader();
       for( var i=0; (i*2) <= regularMeetups.length; i++){
-        var meetup1 = regularMeetups[(i*2)];
+        var meetup1 = regularMeetups[(i*2)] ?  regularMeetups[i*2] : null;
         var meetup2 = regularMeetups[i*2+1] ? regularMeetups[i*2+1] : null;
         meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
       }  

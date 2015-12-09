@@ -113,7 +113,7 @@
         };
         
         var insertInputRow = function(name, inputId, inputType){
-            return [$.el('label', {'class':'control-label col-md-6'}, name), $.el('input', {'id':inputId, 'type': (inputType || 'text')})];
+            return [$.el('label', {'class':'control-label col-md-6 col-sm-6'}, name), $.el('input', {'id':inputId, 'type': (inputType || 'text')})];
         };
         
         var createMeetupForm = function(rowNum, meetNum){
@@ -296,12 +296,19 @@
         });
         </script>
         <style>
+            body{
+                background-color: #F5F5F5;
+            }
+            .col-sm-12{
+                float:none !important;
+            }
+            
             .form-title{
                 background-color: #082952;
                 color: #FFB91C;
             }
             .form-title span{
-                color: #EEE;
+                color: #F5F5F5;
             }
             #main{
                 margin-top: 0px;
@@ -324,12 +331,12 @@
             }
             .input-style{
                 border: none;
-                background-color: #BDC3C7;
+                background-color: #d6d6d6;
+                border-bottom:
             }
             .input-style:focus{
-                background-color:#ECF0F1;
-                border-style: none;
-                border-color: Transparent;
+                background-color:#E0E0E0;
+                outline:none;
             }
             
             #weeklyMsg-title{
@@ -338,9 +345,10 @@
                 padding-left:1px;
             }
             
-             #weeklyMessage{
-               width: 100%; 
-               height: 100px;
+            #weeklyMessage{
+                width: 100%; 
+                height: 100px;
+                padding:10px 13px;
             }
             .top-buffer{margin-top: 10px;}
             .big-buffer{margin-top: 25px;}
@@ -353,19 +361,29 @@
                 margin-top: 10px;
                 font-size: 20px;
                 background: solid;
-                background-color:#EAEAEA;
+                background-color:#E0E0E0;
                 border: none;
-                padding: 9px 24px 6px 13px;
+                /*padding: 9px 24px 6px 13px;*/
                 
             }
             .meetup .container-fluid{
                 background-color:#34495e; 
                 color:#fff;
             }
+            
+            .meetup .container-fluid input{
+                color:#111;
+            }
+            
+            .meet-up-ready{
+                color:#111;
+            }
+            
             #code-preview{ margin-top: 20px;
                            height: 800px;
                            overflow: scroll;
             }
+        
             
            
             
@@ -386,26 +404,26 @@
         <div class="container" id="main">
         
         <div class="row">
-            <div class="col-md-12 container" id="form">
+            <div class="col-md-12 col-sm-12 container" id="form">
                 <div class="row"> 
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-sm-5">
                         <h2 id="week">The Week Of</h2><input id="week-of" type="date" />
                         <a id="set-week" class="btn btn-sm">Edit</a>
                     </div>
                     <div class=col-md-2">
-                        <!--<button id="generate-html">Generate</button>-->
+                        <button id="generate-html">Generate</button>
                     </div>
                 </div>
                 <div class="row top-buffer">
-                    <div class="col-md-8">
+                    <div class="col-md-8 col-sm-12">
                         <h3 id="weeklyMsg-title">Weekly Message</h3>
                          <textarea id="weeklyMessage" class="input-style"></textarea>
                     </div>
                  </div>
                  <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 col-sm-12">
                 
-                        <button id="add-meet-up" class="btn  center-block"" >Add Meet-Up</button><br /><br />
+                        <button id="add-meet-up" class="btn  center-block"" >Add Meetup</button><br /><br />
                        
                     </div>
                 </div>
