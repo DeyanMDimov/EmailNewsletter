@@ -102,7 +102,7 @@
         };
         
         var insertContainer = function(element){
-            element.append($.el('div', {'class':'container-fluid'}));
+            element.append($.el('div', {'class':'container-fluid meetup-container'}));
             return element.children('.container-fluid');
         };
         
@@ -130,10 +130,9 @@
                 meetupContainer = insertContainer(meetupContainer);
             
             var row = insertRow(meetupContainer);
-                row.append($.el('h2',  {'class':'meetupNum'}, meetNum+'.'));
-            
+                            
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('Organizing Group', 'group-name'));
+                row.append($.el('h2',  {'class':'meetupNum col-md-1 col-sm-1'}, meetNum+'.')).append(insertInputRow('Organizing Group', 'group-name'));
                 
                 row = insertRow(meetupContainer);
                 row.append(insertInputRow('Event Type', 'event-type'));
@@ -332,7 +331,7 @@
             .input-style{
                 border: none;
                 background-color: #d6d6d6;
-                border-bottom:
+                border-bottom: solid 20px #454545;
             }
             .input-style:focus{
                 background-color:#E0E0E0;
@@ -345,6 +344,8 @@
                 padding-left:1px;
             }
             
+            
+            
             #weeklyMessage{
                 width: 100%; 
                 height: 100px;
@@ -356,13 +357,16 @@
             
             
             .unblockBtn{font-weight: 300;
-                        cursor: pointer;}
-            #add-meet-up{
-                margin-top: 10px;
+                        cursor: pointer;
+                        }
+            #add-meet-up, #generate-html{
+                margin-top: 20px;
                 font-size: 20px;
+                width: 150px;
+                margin-right: 25px;
                 background: solid;
                 background-color:#E0E0E0;
-                border: none;
+                border-bottom: solid 2px #454545;
                 /*padding: 9px 24px 6px 13px;*/
                 
             }
@@ -371,12 +375,24 @@
                 color:#fff;
             }
             
+            .meetup-container{
+                padding-left:40px;
+            }
+            
+            .meetup row{
+                height:30px;
+            }
+            
             .meetup .container-fluid input{
                 color:#111;
             }
             
             .meet-up-ready{
                 color:#111;
+                margin-bottom:20px;
+            }
+            .meetupNum{
+                margin-left: -18px;
             }
             
             #code-preview{ margin-top: 20px;
@@ -411,7 +427,7 @@
                         <a id="set-week" class="btn btn-sm">Edit</a>
                     </div>
                     <div class=col-md-2">
-                        <button id="generate-html">Generate</button>
+                       
                     </div>
                 </div>
                 <div class="row top-buffer">
@@ -421,9 +437,10 @@
                     </div>
                  </div>
                  <div class="row">
-                    <div class="col-md-4 col-sm-12">
+                    <div class="col-md-8 col-sm-12">
                 
-                        <button id="add-meet-up" class="btn  center-block"" >Add Meetup</button><br /><br />
+                        <button id="add-meet-up" class="btn" >Add Meetup</button>
+                        <button id="generate-html" class="btn" >Generate</button><br /><br />
                        
                     </div>
                 </div>
