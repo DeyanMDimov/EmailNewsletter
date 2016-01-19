@@ -26,7 +26,7 @@
                 }
             });
             
-        var weekOf; 
+        var weekOf = "1/11/16"; 
         var numberOfMeetups;
         var meetups = [];
         var container = $('.col-md-12#form');
@@ -214,6 +214,17 @@
             //block Form
             $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
             $('div#meet-up'+meetNum).block({message:"<h3>Completed</h3>"});
+            
+//            if(weekOf==null){
+//                var timeNow = new Date($.now);
+//                var dayOfWeek = timeNow.getDay();
+//                if(dayOfWeek > 1){
+//                    weekOf = new Date(
+//                }
+//                else{
+//                    weekOf = 
+//                }
+//            }
             
             var submittedNewMeetup = new meetup(groupName, eventTitle, eventType, eventDate, eventAddress, eventDesc, meetNum, eventFeatured, eventFeaturedPerson, eventMoreInfo, eventImage);
             submittedNewMeetup.daysOfWeek = daysOfWeek;
