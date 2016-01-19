@@ -26,7 +26,7 @@
                 }
             });
             
-        var weekOf = "1/11/16"; 
+        var weekOf; 
         var numberOfMeetups;
         var meetups = [];
         var container = $('.col-md-12#form');
@@ -123,52 +123,60 @@
             meetupRow = $.el('div', {'class': 'row big-buffer', 'id': 'meet-ups'+rowNum});
             
             var meetupContainer = $.el('div', {'class':'col-md-6 meetup', 'id':"meet-up"+meetNum});
-            
+
             meetupRow.append(meetupContainer)
             container.append(meetupRow);
+            
+            var leftOffsetElement = function(){
+                var elem = $.el('h2', {'class':'meetupNum col-md-1 col-sm-1'});
+                elem.html('&nbsp;');
+                return elem;
+            };
+
             
                 meetupContainer = insertContainer(meetupContainer);
             
             var row = insertRow(meetupContainer);
                             
                 row = insertRow(meetupContainer);
+                row.addClass('meetup-top-row');
                 row.append($.el('h2',  {'class':'meetupNum col-md-1 col-sm-1'}, meetNum+'.')).append(insertInputRow('Organizing Group', 'group-name'));
                 
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('Event Type', 'event-type'));
+                row.append(leftOffsetElement()).append(insertInputRow('Event Type', 'event-type'));
                 $('#meet-up' + meetNum +' #event-type')[0].value = "Meetup";
                 
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('Event Title', 'event-name'));
+                row.append(leftOffsetElement()).append(insertInputRow('Event Title', 'event-name'));
                 
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('Event Date', 'event-date', 'date'));
+                row.append(leftOffsetElement()).append(insertInputRow('Event Date', 'event-date', 'date'));
                 
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('Event Time', 'event-time'));
+                row.append(leftOffsetElement()).append(insertInputRow('Event Time', 'event-time'));
                 
                 row = insertRow(meetupContainer);
                 var eventDescriptionRow = insertInputRow('Event Description', 'event-desc');
                 eventDescriptionRow[1].css('height', "150px");
-                row.append(eventDescriptionRow);  
+                row.append(leftOffsetElement()).append(eventDescriptionRow);  
                 
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('URL', 'url'));
+                row.append(leftOffsetElement()).append(insertInputRow('URL', 'url'));
                 
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('Image URL', 'image-url'));
+                row.append(leftOffsetElement()).append(insertInputRow('Image URL', 'image-url'));
                 
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('Featured', 'featured', 'checkbox'));
+                row.append(leftOffsetElement()).append(insertInputRow('Featured', 'featured', 'checkbox'));
                 
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('Featured WMPer', 'featured-person', 'text'));
+                row.append(leftOffsetElement()).append(insertInputRow('Featured WMPer', 'featured-person', 'text'));
                 
                 row = insertRow(meetupContainer);
-                row.append(insertInputRow('Address', 'event-address', 'text'));
+                row.append(leftOffsetElement()).append(insertInputRow('Address', 'event-address', 'text'));
                 
                 row = insertRow(meetupContainer);
-                row.append($.el('button', {'class':'meet-up-ready center-block top-buffer', 'id':meetNum}, 'Submit'));  
+                row.append(leftOffsetElement()).append($.el('button', {'class':'meet-up-ready center-block top-buffer', 'id':meetNum}, 'Submit'));  
                 
                  
         };
@@ -215,16 +223,19 @@
             $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
             $('div#meet-up'+meetNum).block({message:"<h3>Completed</h3>"});
             
-//            if(weekOf==null){
-//                var timeNow = new Date($.now);
-//                var dayOfWeek = timeNow.getDay();
-//                if(dayOfWeek > 1){
-//                    weekOf = new Date(
-//                }
-//                else{
-//                    weekOf = 
-//                }
-//            }
+            if(weekOf == null){
+                var timeNow = new Date($.now);
+                var dayOfWeek = timeNow.getDay()+1;
+                if(dayOfWeek > 1 && dayOfWeek <5){
+                    weekOf = new Date(timeNow.getFullYear, timeNow.getMonth, (timeNow.getDate - dayOfWeek + 1));
+                }
+                else{
+                    weekOf = new Date(timeNow.getFullYear, timeNow.getMonth, (timeNow.getDate + 1 + 7 - dayOfWeek));
+                }
+                if(weekOf.getDate < 0){
+                    
+                }
+            }
             
             var submittedNewMeetup = new meetup(groupName, eventTitle, eventType, eventDate, eventAddress, eventDesc, meetNum, eventFeatured, eventFeaturedPerson, eventMoreInfo, eventImage);
             submittedNewMeetup.daysOfWeek = daysOfWeek;
@@ -390,6 +401,10 @@
                 padding-left:40px;
             }
             
+            .meetup-top-row{
+                padding-top: 20px;
+            }
+            
             .meetup row{
                 height:30px;
             }
@@ -404,11 +419,16 @@
             }
             .meetupNum{
                 margin-left: -18px;
+                margin-top:-4px;
+                margin-bottom:0px;
             }
             
             #code-preview{ margin-top: 20px;
                            height: 800px;
                            overflow: scroll;
+            }
+            #event-date{
+                width: 35.3%;
             }
         
             
