@@ -132,7 +132,7 @@ var templateCode = function() {
     }
     if(regularMeetups.length > 0){//delete this if later
       meetupCodeBlock += addRegularHeader();
-      for( var i=0; (i*2) <= regularMeetups.length; i++){
+      for( var i=0; (i*2) < regularMeetups.length; i++){
         var meetup1 = regularMeetups[(i*2)] ?  regularMeetups[i*2] : null;
         var meetup2 = regularMeetups[i*2+1] ? regularMeetups[i*2+1] : null;
         meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
@@ -140,7 +140,7 @@ var templateCode = function() {
     }//delete this if later
     if(farOutMeetups.length>0){
       meetupCodeBlock += addFarOutHeader();
-      for( var i=0; (i*2) <= farOutMeetups.length; i++){
+      for( var i=0; (i*2) < farOutMeetups.length; i++){
         var meetup1 = farOutMeetups[(i*2)];
         var meetup2 = farOutMeetups[i*2+1] ? farOutMeetups[i*2+1] : null;
         meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
