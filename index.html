@@ -113,7 +113,7 @@
         };
         
         var insertInputRow = function(name, inputId, inputType){
-            return [$.el('label', {'class':'control-label col-md-6 col-sm-6'}, name), $.el('input', {'id':inputId, 'type': (inputType || 'text')})];
+            return [$.el('label', {'class':'control-label col-md-6 col-sm-6'}, name), $.el('input', {'id':inputId, 'type': (inputType || 'text'), 'class':'col-md-5 col-sm-5'})];
         };
         
         var createMeetupForm = function(rowNum, meetNum){
@@ -424,12 +424,10 @@
             }
             
             #code-preview{ margin-top: 20px;
-                           height: 800px;
+                           height: 200px;
                            overflow: scroll;
             }
-            #event-date{
-                width: 35.3%;
-            }
+            
         
             
            

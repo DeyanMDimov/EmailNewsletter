@@ -216,7 +216,7 @@ function addMeetupRow(meetup1, meetup2){
                                     <td class="event-image" ><img src="'+ meetup1.groupIcon +'" alt="'+ meetup1.group +'" width="110" height="110" />\
                                     </td>\
                                     <td>\
-                                      <p class="event-loc"><span style="font-weight:bold;">' + meetup1.daysOfWeek[meetup1.eventDate.getDay()].substring(0,3) + '. ' + (meetup1.eventDate.getMonth()+1)+'/'+ (meetup1.eventDate.getDate()+1) + ' ' + meetup1.time + '<br />' + meetup1.eventAddress +'</span></p></td>\
+                                      <p class="event-loc"><span style="font-weight:bold;">' + meetup1.daysOfWeek[meetup1.eventDate.getDay()+1].substring(0,3) + '. ' + (meetup1.eventDate.getMonth()+1)+'/'+ (meetup1.eventDate.getDate()+1) + ' ' + meetup1.time + '<br />' + meetup1.eventAddress +'</span></p></td>\
                                   </tr>\
                                 </table>\
                                 <table>\
