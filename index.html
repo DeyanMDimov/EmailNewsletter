@@ -120,7 +120,7 @@
         };
         
         var insertInputRow = function( inputId, inputType){
-            return [$.el('input', {'id':inputId, 'type': (inputType || 'text'), 'class':'col-md-10 col-sm-5'})];
+            return [$.el('input', {'id':inputId, 'type': (inputType || 'text'), 'class':'col-md-10 col-sm-10'})];
         };
         
         var insertInputTextBox = function( inputId, inputType){
@@ -136,6 +136,13 @@
             
             meetupRow.append(meetupContainer);
             container.append(meetupRow);
+            
+            if(meetNum == 1){
+                $('#bottom-buttons')
+                    .append($.el('button', {'class':'btn', 'id':'add-meet-up'}, 'Add Meetup'))
+                    .append($.el('button', {'class':'btn', 'id':'generate-html'}, 'Generate'));
+                         
+            }
             
             
             
@@ -211,8 +218,11 @@
             weekOf = $('#week-of').val();
         });
         
-        $('#add-meet-up').click(function() {
-          
+        $(document).on('click', '#add-meet-up', function() {
+            addMeetUp();
+        });
+        
+        function addMeetUp(){
             for(i=1; i<10; i++){
                 var meetupRow = $('#meet-ups'+i);
                 if(meetupRow.length <= 0){
@@ -224,9 +234,7 @@
                     return false;
                 }
             }
-            
-           
-        });
+        }
         
         function submitMeetup(meetNum){
             var meetContainer  = $('#meet-up'+meetNum)[0];
@@ -254,17 +262,28 @@
             }
             
             if(weekOf == null){
-                var timeNow = new Date($.now);
-                var dayOfWeek = timeNow.getDay()+1;
-                if(dayOfWeek > 1 && dayOfWeek <5){
-                    weekOf = new Date(timeNow.getFullYear, timeNow.getMonth, (timeNow.getDate - dayOfWeek + 1));
+                var timeNow = new Date($.now());
+                var dayOfWeek = timeNow.getDay()-1;
+                var weekOfDate;
+                if(dayOfWeek >= 0 && dayOfWeek <3){
+                    weekOfDate = timeNow.getDate() - dayOfWeek;
                 }
                 else{
-                    weekOf = new Date(timeNow.getFullYear, timeNow.getMonth, (timeNow.getDate + 1 + 7 - dayOfWeek));
+                    weekOfDate = timeNow.getDate() + 7 - dayOfWeek;
                 }
-                if(weekOf.getDate < 0){
+                if(weekOfDate < 0){
+                    var d= new Date(timeNow.getFullYear(), timeNow.getMonth()+1, 0);
+                    var startOfWeek_Date = d.getDate()-weekOfDate;
+                    weekOf = new Date(timeNow.getFullYear(), timeNow.getMonth(), startOfWeek_Date);
                     
                 }
+                else{
+                    
+                    weekOf = new Date(timeNow.getFullYear(), timeNow.getMonth()+1, weekOfDate);
+                    
+                }
+                $('#week')[0].innerText += ' '+weekOf.getMonth()+'/'+weekOf.getDate();
+                $('#week').css('padding-right', '0px');
             }
             
             var submittedNewMeetup = new meetup(groupName, eventTitle, eventType, eventDate, eventAddress, eventDesc, meetNum, eventFeatured, eventFeaturedPerson, eventMoreInfo, eventImage);
@@ -321,7 +340,7 @@
         
         $(document).on('click', '#code-preview', function(){ selectText('code-preview'); });    
         
-        $('#generate-html').click(function(){
+        $(document).on('click', '#generate-html', function(){
             var previewContainer = $('#code-preview');
             $.templateCode.setWeeklyMessage(getWeeklyMessage());
             $.templateCode.generateMeetups($.grep(meetups, function(e){
@@ -532,6 +551,10 @@
                 font-size:27px;
             }
             
+            #bottom-buttons{
+               
+            }
+            
             #code-preview{ margin-top: 20px;
                            height: 200px;
                            overflow: scroll;
@@ -591,6 +614,8 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-8" id="bottom-buttons"></div>
                 <div class="col-md-12" id="preview">
                     <p class="form-control" id="code-preview">
                         
