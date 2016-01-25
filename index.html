@@ -35,6 +35,7 @@
             defaults.overlayCSS = {
                 backgroundColor: '#27ae60',
 				opacity:			0.9,
+                borderRadius:       '4px'
             };
             defaults.css = {
                 padding:	0,
@@ -102,8 +103,10 @@
         };
         
         var insertContainer = function(element){
-            element.append($.el('div', {'class':'container-fluid meetup-container'}));
-            return element.children('.container-fluid');
+            var blockUIRestraint = $.el('div', {'class':'block-cover'});
+            blockUIRestraint.append($.el('div', {'class':'container-fluid meetup-container'}));
+            element.append(blockUIRestraint);
+            return blockUIRestraint.children('.container-fluid');
         };
         
         var insertRow = function(element){
@@ -112,8 +115,16 @@
             return row;
         };
         
-        var insertInputRow = function(name, inputId, inputType){
-            return [$.el('label', {'class':'control-label col-md-6 col-sm-6'}, name), $.el('input', {'id':inputId, 'type': (inputType || 'text'), 'class':'col-md-5 col-sm-5'})];
+        var insertInputName = function( name, inputId){
+            return [$.el('h5', {'id':inputId, 'class':'col-md-10 col-sm-10'}, name)];
+        };
+        
+        var insertInputRow = function( inputId, inputType){
+            return [$.el('input', {'id':inputId, 'type': (inputType || 'text'), 'class':'col-md-10 col-sm-5'})];
+        };
+        
+        var insertInputTextBox = function( inputId, inputType){
+            return [$.el('textarea', {'id':inputId, 'class':'col-md-10 col-sm-10'})];
         };
         
         var createMeetupForm = function(rowNum, meetNum){
@@ -121,14 +132,16 @@
             var meetupRow = $('#meet-ups'+rowNum);
             if(meetupRow.length==0)
             meetupRow = $.el('div', {'class': 'row big-buffer', 'id': 'meet-ups'+rowNum});
-            
             var meetupContainer = $.el('div', {'class':'col-md-6 meetup', 'id':"meet-up"+meetNum});
-
-            meetupRow.append(meetupContainer)
+            
+            meetupRow.append(meetupContainer);
             container.append(meetupRow);
             
+            
+            
+            
             var leftOffsetElement = function(){
-                var elem = $.el('h2', {'class':'meetupNum col-md-1 col-sm-1'});
+                var elem =  $.el('h2', {'class':'meetupNum col-md-1 col-sm-1'});
                 elem.html('&nbsp;');
                 return elem;
             };
@@ -137,46 +150,59 @@
                 meetupContainer = insertContainer(meetupContainer);
             
             var row = insertRow(meetupContainer);
+                row.addClass('meetup-header');
+                row.append($.el('h2',  {'class':'meetupNum col-md-12 col-sm-12', 'id': meetNum}, meetNum+'. New Event'));
                             
                 row = insertRow(meetupContainer);
                 row.addClass('meetup-top-row');
-                row.append($.el('h2',  {'class':'meetupNum col-md-1 col-sm-1'}, meetNum+'.')).append(insertInputRow('Organizing Group', 'group-name'));
+                row.append(insertInputName('Organizing Group', 'input-title'));
+                row.append(insertInputRow( 'group-name'));
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append(insertInputRow('Event Type', 'event-type'));
-                $('#meet-up' + meetNum +' #event-type')[0].value = "Meetup";
+                row.append(insertInputName('Event Type', 'input-title'));
+                row.append(insertInputRow('event-type'));
+                //$('#meet-up' + meetNum +' #event-type')[0].value = "Meetup";
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append(insertInputRow('Event Title', 'event-name'));
+                row.append(insertInputName('Event Title', 'input-title'));
+                row.append(insertInputRow('event-name'));
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append(insertInputRow('Event Date', 'event-date', 'date'));
+                row.append(insertInputName('Event Date','input-title'));
+                row.append(insertInputRow( 'event-date', 'date'));
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append(insertInputRow('Event Time', 'event-time'));
+                row.append(insertInputName('Event Time', 'input-title'));
+                row.append(insertInputRow('event-time'));
                 
                 row = insertRow(meetupContainer);
-                var eventDescriptionRow = insertInputRow('Event Description', 'event-desc');
-                eventDescriptionRow[1].css('height', "150px");
-                row.append(leftOffsetElement()).append(eventDescriptionRow);  
+                row.append(insertInputName('Event Description', 'input-title'));
+                var eventDescriptionRow = insertInputTextBox('event-desc');
+                eventDescriptionRow[0].css('height', "150px");
+                row.append(eventDescriptionRow);  
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append(insertInputRow('URL', 'url'));
+                row.append(insertInputName('URL', 'input-title'));
+                row.append(insertInputRow('url'));
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append(insertInputRow('Image URL', 'image-url'));
+                row.append(insertInputName('Image URL', 'input-title'));
+                row.append(insertInputRow('image-url'));
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append(insertInputRow('Featured', 'featured', 'checkbox'));
+                row.append(insertInputName('Featured', 'input-title'));
+                row.append(insertInputRow('featured', 'checkbox'));
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append(insertInputRow('Featured WMPer', 'featured-person', 'text'));
+                row.append(insertInputName('Featured WMPer', 'input-title'));
+                row.append(insertInputRow('featured-person', 'text'));
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append(insertInputRow('Address', 'event-address', 'text'));
+                row.append(insertInputName('Address', 'input-title'));
+                row.append(insertInputRow( 'event-address', 'text'));
                 
                 row = insertRow(meetupContainer);
-                row.append(leftOffsetElement()).append($.el('button', {'class':'meet-up-ready center-block top-buffer', 'id':meetNum}, 'Submit'));  
+                row.append($.el('button', {'class':'meet-up-ready col-md-4 col-sm-4 top-buffer', 'id':meetNum}, 'Submit')).append($.el('button', {'class':'clear-meetup col-md-4 col-sm-4 top-buffer', 'id':meetNum}, 'Clear Entries'));  
                 
                  
         };
@@ -221,7 +247,11 @@
             
             //block Form
             $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
-            $('div#meet-up'+meetNum).block({message:"<h3>Completed</h3>"});
+            $('div#meet-up'+meetNum+' .block-cover').block({message:"<h3>Completed</h3>"});
+            
+            if(groupName != null && groupName != ""){
+                $('#'+ meetContainer.id +' .meetupNum')[0].innerText = meetNum + '. ' + groupName;
+            }
             
             if(weekOf == null){
                 var timeNow = new Date($.now);
@@ -256,11 +286,19 @@
         
         function unsubmitMeetup(meetNum){
             var meetContainer  = $('#meet-up'+meetNum);
-            $('div#meet-up'+meetNum).unblock();
+            $('div#meet-up'+meetNum + ' .block-cover').unblock();
             var selectedMeetup = $.grep(meetups, function(e){ return e.id == meetNum; });
             if(selectedMeetup.length == 1){
                 selectedMeetup[0].completed = false;
             }
+        }
+        
+        function clearInputFields(meetNum){
+            var Inputs = $('#meet-up'+meetNum+' input');
+            Inputs.push($('#meet-up'+meetNum+' textarea')[0]);
+            Inputs.each(function(){
+                $(this).val("").removeAttr("checked");
+            });
         }
         
         function getWeeklyMessage(){
@@ -277,6 +315,10 @@
             unsubmitMeetup(this.id);
             });
             
+        $('.container').on('click', '.clear-meetup', function(){
+            clearInputFields(this.id);
+        });
+        
         $(document).on('click', '#code-preview', function(){ selectText('code-preview'); });    
         
         $('#generate-html').click(function(){
@@ -294,6 +336,8 @@
             previewContainer.text(html);
             
         }); 
+        
+        
         
         function selectText(element) {
             var doc = document
@@ -319,10 +363,14 @@
         <style>
             body{
                 background-color: #F5F5F5;
+                
             }
-            .col-sm-12{
+            * {
+                font-family:  'HelveticaNeue-Light', 'Helvetica Nueu Light', Helvetica, 'Segoe UI', Calibri, sans-serif;
+            }
+/*            .col-sm-12{
                 float:none !important;
-            }
+            }*/
             
             .form-title{
                 background-color: #082952;
@@ -330,6 +378,9 @@
             }
             .form-title span{
                 color: #F5F5F5;
+            }
+            .form-title h2, .form-title h2 span{
+                font-family: 'Helvetica Neue Light', Helvetica, 'Segoe UI', Calibri, sans-serif !important;
             }
             #main{
                 margin-top: 0px;
@@ -350,10 +401,31 @@
             #set-week:hover{
                 color:#999;
             }
+            
+            #input-title{
+                color:#666;
+                display: block;
+                float: none;
+                margin: 5px auto 2px;
+                padding: 0 5px;
+                font-size:16px;
+            }
+            
             .input-style{
                 border: none;
                 background-color: #d6d6d6;
-                border-bottom: solid 20px #454545;
+                border-bottom: solid 3px #454545;
+            }
+            
+            #event-desc{
+                height:150px;
+                display: block;
+                float: none;
+                margin:5px auto;
+                border: none;
+                border-radius: 4px;
+                color:#333;
+                padding: 8px 10px;
             }
             .input-style:focus{
                 background-color:#E0E0E0;
@@ -372,11 +444,14 @@
                 width: 100%; 
                 height: 100px;
                 padding:10px 13px;
+                border-radius: 3px;
             }
             .top-buffer{margin-top: 10px;}
             .big-buffer{margin-top: 25px;}
             
-            
+            .btn{
+                border-radius:3px;
+            }
             
             .unblockBtn{font-weight: 300;
                         cursor: pointer;
@@ -393,16 +468,23 @@
                 
             }
             .meetup .container-fluid{
-                background-color:#34495e; 
+                background-color:#ddd; 
                 color:#fff;
+                border-radius: 7px;
             }
             
             .meetup-container{
-                padding-left:40px;
+                
+            }
+            
+            .meetup-header{
+                border-radius: 7px 7px 0 0;
+                background-color: #082952;
+                padding: 10px;
             }
             
             .meetup-top-row{
-                padding-top: 20px;
+                padding-top: 10px;
             }
             
             .meetup row{
@@ -411,21 +493,57 @@
             
             .meetup .container-fluid input{
                 color:#111;
+                display:block;
+                margin: 5px auto;
+                float: none;
+                padding: 8px 10px;
+                border: none;
+                border-radius:3px;
             }
             
-            .meet-up-ready{
-                color:#111;
-                margin-bottom:20px;
+            .meetup-top-row input{
+/*                margin-top: 0 !important;*/
             }
+            
+            .meet-up-ready, .clear-meetup{
+                color:#111;
+                margin: 15px 0 20px;
+                border:none;
+                border-radius: 3px; 
+                margin-left: 13.2%;
+                font-size:16px;
+                padding: 10px;
+                background-color: #3B6190;
+                color: #fff;
+            }
+            
+            .clear-meetup{
+                margin-left:6.6%;
+                color: #999;
+                background: none;
+                
+                
+            }
+            
             .meetupNum{
-                margin-left: -18px;
-                margin-top:-4px;
+                margin-left: -10px;
+                margin-top: 0px;
                 margin-bottom:0px;
+                font-size:27px;
             }
             
             #code-preview{ margin-top: 20px;
                            height: 200px;
                            overflow: scroll;
+            }
+            #footer{
+                display: block;
+                margin: 10px auto;
+                height: 200px;
+                width: 400px;
+                list-style-type: none;
+                text-align: center;
+                padding: 0px;
             }
             
         
@@ -442,47 +560,48 @@
         <!-- Add your site or application content here -->
         <div class="form-title">
             <div class="container">
-                <h2><span>Meetup Email</span> Generator</h2>
+                <h2 class="col-md-10 col-md-offset-1" style="padding-left:30px !important;"><span>Event/Meetup Email</span> Generator</h2>
             </div>
         </div>
             
         <div class="container" id="main">
-        
-        <div class="row">
-            <div class="col-md-12 col-sm-12 container" id="form">
-                <div class="row"> 
-                    <div class="col-md-4 col-sm-5">
-                        <h2 id="week">The Week Of</h2><input id="week-of" type="date" />
-                        <a id="set-week" class="btn btn-sm">Edit</a>
+            <div class="row col-md-10 col-md-offset-1 col-sm-10">
+                <div class="col-md-12 col-sm-12 container" id="form">
+                    <div class="row"> 
+                        <div class="col-md-5 col-sm-10">
+                            <h2 id="week">The Week Of</h2><input id="week-of" type="date" />
+                            <a id="set-week" class="btn btn-sm">Edit</a>
+                        </div>
+                        <div class=col-md-2">
+                           
+                        </div>
                     </div>
-                    <div class=col-md-2">
-                       
-                    </div>
-                </div>
-                <div class="row top-buffer">
-                    <div class="col-md-8 col-sm-12">
-                        <h3 id="weeklyMsg-title">Weekly Message</h3>
-                         <textarea id="weeklyMessage" class="input-style"></textarea>
-                    </div>
-                 </div>
-                 <div class="row">
-                    <div class="col-md-8 col-sm-12">
-                
-                        <button id="add-meet-up" class="btn" >Add Meetup</button>
-                        <button id="generate-html" class="btn" >Generate</button><br /><br />
-                       
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-10" id="preview">
-                <p class="form-control" id="code-preview">
+                    <div class="row top-buffer">
+                        <div class="col-md-12 col-sm-12">
+                            <h3 id="weeklyMsg-title">Weekly Message</h3>
+                             <textarea id="weeklyMessage" class="input-style"></textarea>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-md-8 col-sm-12">
                     
-                </p>
+                            <button id="add-meet-up" class="btn" >Add Meetup</button>
+                            <button id="generate-html" class="btn" >Generate</button><br /><br />
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12" id="preview">
+                    <p class="form-control" id="code-preview">
+                        
+                    </p>
+                </div>
+                <div class="col-md-12" >
+                    <ul id="footer">
+                        <li>Made by Deyan Dimov <span>- West Monroe Partners Chicago, 2016</span></li>
+                    </ul>
+                </div>
             </div>
-        </div>
-        
-        
-        
         </div>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
