@@ -4,11 +4,11 @@ $(
 
 var templateCode = function() {
   
-  this.htmlBlocks = [];
+    this.htmlBlocks = [];
 
-  this.weeklyMessage;
+    this.weeklyMessage;
   
-  var topBlock;
+    var topBlock;
 	
 	this.setWeeklyMessage = function(msg){
   this.htmlBlocks = [];
@@ -106,271 +106,214 @@ var templateCode = function() {
 					this.htmlBlocks.push(topBlock);
   };   
   
- this.generateMeetups = function(meetupsList){
-    var meetupCodeBlock = [];
-    meetupsList = $.grep(meetupsList, function(e){
-        return e.completed == true;
-    });
+    this.generateMeetups = function(meetupsList){
+        var meetupCodeBlock = [];
+        meetupsList = $.grep(meetupsList, function(e){
+            return e.completed == true;
+            });
     
-    var featuredMeetups = $.grep(meetupsList, function(e){
-          return e.featured == true && e.farOut == false;
-    });
+        var featuredMeetups = $.grep(meetupsList, function(e){
+          return e.featured == true;
+            });
     
-    var regularMeetups = $.grep(meetupsList, function(e){
-          return e.featured == false && e.farOut == false;
-    });
-    var farOutMeetups = $.grep(meetupsList, function(e){
-          return e.farOut == true;
-    });
-    if(featuredMeetups.length > 0){
-      meetupCodeBlock = addFeaturedHeader();
-      for( var i=0; (i*2) < featuredMeetups.length; i++){
-        var meetup1 = featuredMeetups[(i*2)];
-        var meetup2 = featuredMeetups[i*2+1] ? featuredMeetups[i*2+1] : null;
-        meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
-      }
-    }
-    if(regularMeetups.length > 0){//delete this if later
-      meetupCodeBlock += addRegularHeader();
-      for( var i=0; (i*2) < regularMeetups.length; i++){
-        var meetup1 = regularMeetups[(i*2)] ?  regularMeetups[i*2] : null;
-        var meetup2 = regularMeetups[i*2+1] ? regularMeetups[i*2+1] : null;
-        meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
-      }  
-    }//delete this if later
-    if(farOutMeetups.length>0){
-      meetupCodeBlock += addFarOutHeader();
-      for( var i=0; (i*2) < farOutMeetups.length; i++){
-        var meetup1 = farOutMeetups[(i*2)];
-        var meetup2 = farOutMeetups[i*2+1] ? farOutMeetups[i*2+1] : null;
-        meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
-      }  
-    }
+        var regularMeetups = $.grep(meetupsList, function(e){
+            return e.featured == false && e.farOut == false;
+            });
+        
+        var farOutMeetups = $.grep(meetupsList, function(e){
+            return e.featured == false && e.farOut == true;
+            });
+        
+        if(featuredMeetups.length > 0){
+            meetupCodeBlock = addFeaturedHeader();
+            for(var i=0; (i*2) < featuredMeetups.length; i++){
+                var meetup1 = featuredMeetups[(i*2)];
+                var meetup2 = featuredMeetups[i*2+1] ? featuredMeetups[i*2+1] : null;
+                meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
+                }
+            }
+        
+        if(regularMeetups.length > 0){//delete this if later
+            meetupCodeBlock += addRegularHeader();
+            for(var i=0; (i*2) < regularMeetups.length; i++){
+                var meetup1 = regularMeetups[(i*2)] ?  regularMeetups[i*2] : null;
+                var meetup2 = regularMeetups[i*2+1] ? regularMeetups[i*2+1] : null;
+                meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
+                }  
+            }//delete this if later
+        
+        if(farOutMeetups.length>0){
+            meetupCodeBlock += addFarOutHeader();
+            for(var i=0; (i*2) < farOutMeetups.length; i++){
+                var meetup1 = farOutMeetups[(i*2)];
+                var meetup2 = farOutMeetups[i*2+1] ? farOutMeetups[i*2+1] : null;
+                meetupCodeBlock += (addMeetupRow(meetup1, meetup2));
+                }  
+            }
     
-    this.htmlBlocks.push(meetupCodeBlock);
-}       
+        this.htmlBlocks.push(meetupCodeBlock);
+    }       
 	
   
-function addFeaturedHeader(){
-  var htmlBlock = '<table class="row"><tr><td class="wrapper last"><tr><td> \
-                    <table class="twelve columns"><tr><td>\
-                      <h4 class="subtitle" style="border-bottom: solid 3px #082952;">Featured Meet Ups</h4>\
-                    </td><td class="expander"></td></tr></table>\
-                  </td></tr></table>';
-  return htmlBlock;
-}
-
-function addRegularHeader(){
-  var htmlBlock = '<table class="row"><tr><td class="wrapper last"><tr><td>\
-                    <table class="twelve columns"><tr><td>\
-                      <h4 class="subtitle" style="border-bottom: solid 3px #082952;">This Week</h4>\
-                    </td><td class="expander"></td></tr></table>\
-                  </td></tr></table>';
-  return htmlBlock;
-}
-
-function addFarOutHeader(){
-  var htmlBlock = '<table class="row"><tr><td class="wrapper last"><tr><td>  \
-                    <table class="twelve columns"><tr><td>\
-                      <h4 class="subtitle" style="border-bottom: solid 3px #082952;">On the Horizon</h4>\
-                    </td><td class="expander"></td></tr></table>\
-                  </td></tr></table>';
-  return htmlBlock;
-}
-
-function addMeetupRow(meetup1, meetup2){
-        
-    if(meetup2 != null){
-        meetup2.eventHeader = ' <table class="meetup-right-table event-header-table"><tr>\
-                          <td class="event-type">'+ meetup2.eventType + '</td>\
-                          <td class="event-date" rowspan="2">'+ meetup2.eventDate + '&nbsp;</td>\
-                        </tr></table>\
-                        ';
-        meetup2.eventImageAndLocation = '<td class="event-image"><img src="'+ meetup2.eventImage + '" alt="Chicago .NET Mobile Developers" width="110" height="110" /></td>\
-        <td>'+ meetup2.eventAddress + '</p></td>\
-        ';
-        meetup2.eventMoreInfo = '<a href="'+ meetup2.url +'">Find out more</a>';
-        
+    function addFeaturedHeader(){
+          var htmlBlock = '<table class="row"><tr><td class="wrapper last"><tr><td> \
+                            <table class="twelve columns"><tr><td>\
+                              <h4 class="subtitle" style="border-bottom: solid 3px #082952;">Featured Meet Ups</h4>\
+                            </td><td class="expander"></td></tr></table>\
+                          </td></tr></table>';
+          return htmlBlock;
     }
-    var htmlBlock = '<table class="row events-listings">\
-                       <tr>\
-                        <td class="wrapper">\
-                          <table class="six columns">\
-                            <tr>\
-                              <td class="event">\
-                                <table class="event-header">\
-                                  <tr>\
-                                    <td class="event-type">'+ meetup1.eventType +'</td>\
-                                    <td class="event-date" rowspan="2">'+(meetup1.eventDate.getMonth()+1)+'/'+ (meetup1.eventDate.getDate()+1) +'&nbsp;</td>\
-                                  </tr>\
-                                  <tr>\
-                                    <td class="event-group" colspan="2">'+ meetup1.group +
-                                    '</td>\
-                                  </tr>\
-                                  <tr>\
-                                    <td class="event-name" colspan="2"><span>'+ meetup1.eventTitle +'</span></td>\
-                                  </tr>\
-                                </table>\
-                                <table height="125" width="295">\
-                                  <tr>\
-                                    <td class="event-image" ><img src="'+ meetup1.groupIcon +'" alt="'+ meetup1.group +'" width="110" height="110" />\
-                                    </td>\
-                                    <td>\
-                                      <p class="event-loc"><span style="font-weight:bold;">' + meetup1.daysOfWeek[meetup1.eventDate.getDay()+1].substring(0,3) + '. ' + (meetup1.eventDate.getMonth()+1)+'/'+ (meetup1.eventDate.getDate()+1) + ' ' + meetup1.time + '<br />' + meetup1.eventAddress +'</span></p></td>\
-                                  </tr>\
-                                </table>\
-                                <table>\
-                                  <tr>\
-                                    <td class="event-description">\
-                                        ' +meetup1.eventDesc+ 
-                                        (meetup1.featured ? '<br /><br /><b>Featured WMP Member:</b> ' + meetup1.featuredPerson : '') + '\
-                                    </td>\
-                                  </tr>\
-                                </table>\
-                                <table class="button">\
-                                  <tr>\
-                                    <td>\
-                                      <a href="' +meetup1.url+ '">Find out more</a>\
-                                    </td>\
-                                  </tr>\
-                                </table>\
-                              </td>\
-                              <td class="expander"></td>\
-                            </tr>\
-                          </table>\
-                        </td>'+
-                        '<td class="wrapper last">' +
-                          (!meetup2 ? '' : '\
-                          <table class="six columns">\
-                            <tr>\
-                              <td class="event">\
-                                <table class="event-header">\
-                                  <tr>\
-                                    <td class="event-type">'+ meetup2.eventType +'</td>\
-                                    <td class="event-date" rowspan="2">'+(meetup2.eventDate.getMonth()+1)+'/'+ (meetup2.eventDate.getDate()+1) +'&nbsp;</td>\
-                                  </tr>\
-                                  <tr>\
-                                    <td class="event-group" colspan="2">'+ meetup2.group +
-                                    '</td>\
-                                  </tr>\
-                                  <tr>\
-                                    <td class="event-name" colspan="2"><span>'+ meetup2.eventTitle +'</span></td>\
-                                  </tr>\
-                                </table>\
-                                <table height="125" width="295">\
-                                  <tr>\
-                                    <td class="event-image" ><img src="'+ meetup2.groupIcon +'" alt="'+ meetup2.group +'" width="110" height="110" />\
-                                    </td>\
-                                    <td>\
-                                      <p class="event-loc"><span style="font-weight:bold;">'+(meetup2 ? meetup2.daysOfWeek[meetup2.eventDate.getDay()].substring(0,3) + '. ' + (meetup2.eventDate.getMonth()+1)+'/'+ (meetup2.eventDate.getDate()+1) + ' ' + meetup2.time + '<br />' + meetup2.eventAddress :'')+'</span></p></td>\
-                                  </tr>\
-                                </table>\
-                                <table>\
-                                  <tr>\
-                                    <td class="event-description">\
-                                        ' +meetup2.eventDesc+ 
-                                        (meetup2.featured ? '<br /><br /><b>Featured WMP Member:</b> ' + meetup2.featuredPerson : '') + '\
-                                    </td>\
-                                  </tr>\
-                                </table>\
-                                <table class="button">\
-                                  <tr>\
-                                    <td>\
-                                      <a href="' +meetup2.url+ '">Find out more</a>\
-                                    </td>\
-                                  </tr>\
-                                </table>\
-                              </td>\
-                              <td class="expander"></td>\
-                            </tr>\
-                          </table>')+
-                        '</td>\
-                      </tr>\
-                    </table>';
-    
-    
-  /*  '<table class="row events-listings"><tr class="event-headers"><td class="wrapper">\
-                      <table class="twelve columns"><tr><td class="event-header meetup-left">\
-                        <table class="meetup-left-table event-header-table"><tr>\
-                          <td class="event-type">'+ meetup1.eventType +'</td>\
-                          <td class="event-date" rowspan="2">'+meetup1.eventDate.getMonth()+'/'+meetup1.eventDate.getDate() +'&nbsp;\
-                          </td></tr>\
-                    	    <tr><td style="height:5px;"></td>\
-                        </tr></table>\
-                      </td>\
-                      <td class="event-header meetup-right">\
-                        ' + (meetup2 ? meetup2.eventHeader:'&nbsp;') + '\
+
+    function addRegularHeader(){
+          var htmlBlock = '<table class="row"><tr><td class="wrapper last"><tr><td>\
+                            <table class="twelve columns"><tr><td>\
+                              <h4 class="subtitle" style="border-bottom: solid 3px #082952;">This Week</h4>\
+                            </td><td class="expander"></td></tr></table>\
+                          </td></tr></table>';
+          return htmlBlock;
+    }
+
+    function addFarOutHeader(){
+        var htmlBlock = '<table class="row"><tr><td class="wrapper last"><tr><td>  \
+                        <table class="twelve columns"><tr><td>\
+                          <h4 class="subtitle" style="border-bottom: solid 3px #082952;">On the Horizon</h4>\
+                        </td><td class="expander"></td></tr></table>\
+                      </td></tr></table>';
+        return htmlBlock;
+    }
+
+    function addMeetupRow(meetup1, meetup2){
+        
+        if(meetup2 != null){
+            meetup2.eventHeader = ' <table class="meetup-right-table event-header-table"><tr>\
+                              <td class="event-type">'+ meetup2.eventType + '</td>\
+                              <td class="event-date" rowspan="2">'+ meetup2.eventDate + '&nbsp;</td>\
+                            </tr></table>\
+                            ';
+            meetup2.eventImageAndLocation = '<td class="event-image"><img src="'+ meetup2.eventImage + '" alt="Chicago .NET Mobile Developers" width="110" height="110" /></td>\
+            <td>'+ meetup2.eventAddress + '</p></td>\
+            ';
+            meetup2.eventMoreInfo = '<a href="'+ meetup2.url +'">Find out more</a>';
+
+        }
+        var htmlBlock = '<table class="row events-listings">\
+                           <tr>\
+                            <td class="wrapper">\
+                              <table class="six columns">\
+                                <tr>\
+                                  <td class="event">\
+                                    <table class="event-header">\
+                                      <tr>\
+                                        <td class="event-type">'+ meetup1.eventType +'</td>\
+                                        <td class="event-date" rowspan="2">'+(meetup1.eventDate.getMonth()+1)+'/'+ (meetup1.eventDate.getDate()+1) +'&nbsp;</td>\
+                                      </tr>\
+                                      <tr>\
+                                        <td class="event-group" colspan="2">'+ meetup1.group +
+                                        '</td>\
+                                      </tr>\
+                                      <tr>\
+                                        <td class="event-name" colspan="2"><span>'+ meetup1.eventTitle +'</span></td>\
+                                      </tr>\
+                                    </table>\
+                                    <table height="125" width="295">\
+                                      <tr>\
+                                        <td class="event-image" ><img src="'+ meetup1.groupIcon +'" alt="'+ meetup1.group +'" width="110" height="110" />\
+                                        </td>\
+                                        <td>\
+                                          <p class="event-loc"><span style="font-weight:bold;">' + meetup1.daysOfWeek[meetup1.eventDate.getDay()+1].substring(0,3) + '. ' + (meetup1.eventDate.getMonth()+1)+'/'+ (meetup1.eventDate.getDate()+1) + ' ' + meetup1.time + '<br />' + meetup1.eventAddress +'</span></p></td>\
+                                      </tr>\
+                                    </table>\
+                                    <table>\
+                                      <tr>\
+                                        <td class="event-description">\
+                                            ' +meetup1.eventDesc+ 
+                                            (meetup1.featured ? '<br /><br /><b>Featured WMP Member:</b> ' + meetup1.featuredPerson : '') + '\
+                                        </td>\
+                                      </tr>\
+                                    </table>\
+                                    <table class="button">\
+                                      <tr>\
+                                        <td>\
+                                          <a href="' +meetup1.url+ '">Find out more</a>\
+                                        </td>\
+                                      </tr>\
+                                    </table>\
+                                  </td>\
+                                  <td class="expander"></td>\
+                                </tr>\
+                              </table>\
+                            </td>'+
+                            '<td class="wrapper last">' +
+                              (!meetup2 ? '' : '\
+                              <table class="six columns">\
+                                <tr>\
+                                  <td class="event">\
+                                    <table class="event-header">\
+                                      <tr>\
+                                        <td class="event-type">'+ meetup2.eventType +'</td>\
+                                        <td class="event-date" rowspan="2">'+(meetup2.eventDate.getMonth()+1)+'/'+ (meetup2.eventDate.getDate()+1) +'&nbsp;</td>\
+                                      </tr>\
+                                      <tr>\
+                                        <td class="event-group" colspan="2">'+ meetup2.group +
+                                        '</td>\
+                                      </tr>\
+                                      <tr>\
+                                        <td class="event-name" colspan="2"><span>'+ meetup2.eventTitle +'</span></td>\
+                                      </tr>\
+                                    </table>\
+                                    <table height="125" width="295">\
+                                      <tr>\
+                                        <td class="event-image" ><img src="'+ meetup2.groupIcon +'" alt="'+ meetup2.group +'" width="110" height="110" />\
+                                        </td>\
+                                        <td>\
+                                          <p class="event-loc"><span style="font-weight:bold;">'+(meetup2 ? meetup2.daysOfWeek[meetup2.eventDate.getDay()].substring(0,3) + '. ' + (meetup2.eventDate.getMonth()+1)+'/'+ (meetup2.eventDate.getDate()+1) + ' ' + meetup2.time + '<br />' + meetup2.eventAddress :'')+'</span></p></td>\
+                                      </tr>\
+                                    </table>\
+                                    <table>\
+                                      <tr>\
+                                        <td class="event-description">\
+                                            ' +meetup2.eventDesc+ 
+                                            (meetup2.featured ? '<br /><br /><b>Featured WMP Member:</b> ' + meetup2.featuredPerson : '') + '\
+                                        </td>\
+                                      </tr>\
+                                    </table>\
+                                    <table class="button">\
+                                      <tr>\
+                                        <td>\
+                                          <a href="' +meetup2.url+ '">Find out more</a>\
+                                        </td>\
+                                      </tr>\
+                                    </table>\
+                                  </td>\
+                                  <td class="expander"></td>\
+                                </tr>\
+                              </table>')+
+                            '</td>\
+                          </tr>\
+                        </table>';
+
+                   return htmlBlock;                          
+    }
+
+    this.templateClose = function(){
+      var htmlBlock = 
+                    '</table></center>\
+                      </td></tr></table><br><br>\
+                      <!-- Legal + Unsubscribe -->\
+                      <table class="row"><tr><td class="wrapper last">\
+                        <table style="width:100%"><tr><td align="center"><center>\
+                          <p style="text-align:center;">&#169; 2016 West Monroe Partners, LLC </p>\
+                        </center></td><td class="expander"></td></tr></table>\
                       </td></tr></table>\
-                      </td></tr>\
-                      <tr class="event-group-names"><td class="wrapper">\
-                        <table class="twelve columns"><tr>\
-                          <td class="event-group meetup-left" ><table class="meetup-left-table"><tr><td class="meetup-cell">'+ meetup1.group +'</td></tr></table></td>\
-                          <td class="event-group meetup-right" ><table><tr>'+ (meetup2 ? '<td class="meetup-cell">'+meetup2.group+'</td>':'&nbsp;') +'</tr></table>\</td>\
-                      </tr></table>\
-                    </td></tr>\
-                    <tr class="event-names"><td class="wrapper">\
-                      <table class="twelve columns"><tr>\
-                          <td class="event-name meetup-left" ><table class="meetup-left-table event-name-table"><tr><td class="meetup-cell"><span>'+ meetup1.eventTitle+ '</span></td></tr></table></td>\
-                          <td class="event-name meetup-right"><table class="event-name-table"><tr>'+ (meetup2 ? '<td class="meetup-cell"><span>'+meetup2.eventTitle+'</span></td>':'&nbsp;')+ '</tr></table></td>\
-                      </tr></table>\
-                    </td></tr>\
-                    <tr class="event-images"><td class="wrapper">\
-                      <table class="twelve columns"><tr><td class="meetup-left">\
-                        <table><tr>\
-                          <td class="event-image meetup-cell-l"><img src="'+ meetup1.groupIcon +'" width="110" height="110" /></td>\
-                          <td><p class="event-loc meetup-cell-r"><br /><span>'+meetup1.eventDate.getMonth()+'/'+meetup1.eventDate.getDay() +'</span> <br />'+meetup1.EventAddress+'</p></td>\
-                        </tr></table>\
-                      </td><td class="meetup-right">\
-                        <table><tr>\
-                          <td class="event-image meetup-cell-l">'+(meetup2 ? '<img src="'+ meetup2.groupIcon+'" alt="Chicago .NET Mobile Developers" width="110" height="110" />':'&nbsp;')+'</td>\
-                          <td><p class="event-loc meetup-cell-r"><br /><span>'+(meetup2 ? meetup2.eventDate:'&nbsp;')+' </span> <br />'+(meetup2 ? meetup2.EventAddress:'')+'</p></td>\
-                        </tr></table>\
+                      <!-- container end below -->\
                       </td></tr></table>\
-                    </td></tr>\
-                    <tr class="event-descriptions"><td class="wrapper">\
-                      <table class="twelve columns"><tr>\
-                        <td class="event-description meetup-left" ><table class="meetup-left-table"><tr><td class="meetup-cell">'+meetup1.eventDesc+'</td></tr></table></td>\
-                        <td class="event-description meetup-right"><table><tr>'+(meetup2 ? '<td class="meetup-cell">'+meetup2.eventDesc+'</td>':'&nbsp;')+'</tr></table></td>\
-                      </tr></table>\
-                    </td></tr>\
-                    <tr class="event-links"><td class="wrapper">\
-                      <table class="twelve columns"><tr>\
-                        <td class="event-link meetup-left" ><table class="meetup-left-table"><tr><td class="meetup-cell center"><a href="'+meetup1.url+'">Find out more</a></td></tr></table></td>\
-                        <td class="event-link meetup-right"><table><tr>'+(meetup2 ? '<td class="meetup-cell center"><a href="'+meetup2.url+'">Find out more</a></td>' : '') + '</td></tr></table></td>\
-                      </tr></table>\
-                    </td></tr>\
-                    <tr class="event-spacers"><td class="wrapper">\
-                      <table class="twelve columns"><tr>\
-                        <td class="meet-expander meetup-left" ><table class="meetup-left-table"><tr><td>&nbsp;</td></tr></table></td>\
-                        <td '+ (meetup2 ? 'class="meet-expander meetup-right"><table><tr><td>&nbsp;</td></tr></table>' : '>') +'</td>\
-                      </tr></table>\
-                   </td></tr></table>';*/
-                       
-                 
-               return htmlBlock;                          
-}
+                    </center></td></tr></table>\
+                  </body></html>'; 
+      this.htmlBlocks.push(htmlBlock);
+    };
 
-this.templateClose = function(){
-  var htmlBlock = 
-                '</table></center>\
-                  </td></tr></table><br><br>\
-                  <!-- Legal + Unsubscribe -->\
-                  <table class="row"><tr><td class="wrapper last">\
-                    <table class="twelve columns"><tr><td align="center"><center>\
-                      <p style="text-align:center;">&#169; 2015 West Monroe Partners, LLC </p>\
-                    </center></td><td class="expander"></td></tr></table>\
-                  </td></tr></table>\
-                  <!-- container end below -->\
-                  </td></tr></table>\
-                </center></td></tr></table>\
-              </body></html>'; 
-  this.htmlBlocks.push(htmlBlock);
-};
-  
-};
+    };
 
 
-
-
-$.templateCode = new templateCode();
+    $.templateCode = new templateCode();
 });

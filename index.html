@@ -12,9 +12,12 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.blockUI.js" type="text/javascript"></script>
         <script src="js/code-blocks.js" type="text/javascript"></script>
+        <script src='js/db.js'></script>
+        <!--<script src='js/meetup-database.js'></script>-->
         <script type="text/javascript"> 
         $( 
             
+        //Create new Element    
         function($){    
             $.extend({
                 el: function(el, props, text) {
@@ -25,34 +28,39 @@
                     return $el;
                 }
             });
-            
+        
+        //Declare basic variables
         var weekOf;   
         var numberOfMeetups;
         var meetups = [];
         var container = $('.col-md-12#form');
         var setBlockingStyle = function(){
+            
             var defaults = $.blockUI.defaults;
             defaults.overlayCSS = {
-                backgroundColor: '#27ae60',
-				opacity:			0.9,
-                borderRadius:       '4px'
-            };
+                    backgroundColor: '#27ae60',
+                    opacity:			0.9,
+                    borderRadius:       '4px'
+                };
             defaults.css = {
-                padding:	0,
-				margin:		0,
-				width:		'30%',
-				top:		'30%',
-				left:		'35%',
-				textAlign:	'center',
-				color:		'#fff',
-				border:		'none',
-				background: 'none',
-                fontSize:   '20px',
-            };
+                    padding:	0,
+                    margin:		0,
+                    width:		'30%',
+                    top:		'30%',
+                    left:		'35%',
+                    textAlign:	'center',
+                    color:		'#fff',
+                    border:		'none',
+                    background: 'none',
+                    fontSize:   '20px',
+                };
             defaults.centerY = false;
+            
         }();
-        
+            
+        //Meetup Constructor
         var meetup = function(name, event, eventType, date, address, description, id, featured, featuredPerson, url, eventImage) {
+            
             this.group = name;
             this.eventTitle = event;
             this.eventType = eventType;
@@ -66,9 +74,12 @@
             this.featuredPerson = featuredPerson;
             this.url = url;
             this.farOut = checkFarOut(weekOf, date);
+            
         };
-        
+            
+        //Categorize meetup by date 
         var checkFarOut = function(weekDate, meetupDate){
+            
             weekDate = new Date(weekDate);
             var weekDateNumber = weekDate.getDate()+1;
             var meetupDateNumber = meetupDate.getDate()+1;
@@ -100,33 +111,42 @@
                 }
             }
             else{ return true;}
+            
         };
-        
+            
+        //Add meetup container
         var insertContainer = function(element){
+            
             var blockUIRestraint = $.el('div', {'class':'block-cover'});
             blockUIRestraint.append($.el('div', {'class':'container-fluid meetup-container'}));
             element.append(blockUIRestraint);
             return blockUIRestraint.children('.container-fluid');
+            
         };
         
+        //Add row to meetup container
         var insertRow = function(element){
             var row = $.el('div', {'class':'row'});
             element.append(row);
             return row;
         };
         
+        //Insert Title of Input field in meetup container
         var insertInputName = function( name, inputId){
             return [$.el('h5', {'id':inputId, 'class':'col-md-10 col-sm-10'}, name)];
         };
         
+        //Insert Row just for input element
         var insertInputRow = function( inputId, inputType){
             return [$.el('input', {'id':inputId, 'type': (inputType || 'text'), 'class':'col-md-10 col-sm-10'})];
         };
         
+        //Insert Text input field 
         var insertInputTextBox = function( inputId, inputType){
             return [$.el('textarea', {'id':inputId, 'class':'col-md-10 col-sm-10'})];
         };
         
+        //Go through and create a new meetup-form, uses all the functions above to put it all together
         var createMeetupForm = function(rowNum, meetNum){
             
             var meetupRow = $('#meet-ups'+rowNum);
@@ -137,25 +157,17 @@
             meetupRow.append(meetupContainer);
             container.append(meetupRow);
             
+            //Once we have a meet up form, add buttons on the bottom so you don't have to scroll to top
             if(meetNum == 1){
                 $('#bottom-buttons')
                     .append($.el('button', {'class':'btn', 'id':'add-meet-up'}, 'Add Meetup'))
                     .append($.el('button', {'class':'btn', 'id':'generate-html'}, 'Generate'));
                          
             }
-            
-            
-            
-            
-            var leftOffsetElement = function(){
-                var elem =  $.el('h2', {'class':'meetupNum col-md-1 col-sm-1'});
-                elem.html('&nbsp;');
-                return elem;
-            };
 
             
-                meetupContainer = insertContainer(meetupContainer);
-            
+            meetupContainer = insertContainer(meetupContainer);
+            //Add each row of the meetup container 
             var row = insertRow(meetupContainer);
                 row.addClass('meetup-header');
                 row.append($.el('h2',  {'class':'meetupNum col-md-12 col-sm-12', 'id': meetNum}, meetNum+'. New Event'));
@@ -215,13 +227,14 @@
         };
         
         $('#set-week').click(function() {
-            weekOf = $('#week-of').val();
+            var w33k = $('.datepicker');
+            w33k.css({visibility:'visible'});
+            w33k.datepicker();
+            
         });
         
-        $(document).on('click', '#add-meet-up', function() {
-            addMeetUp();
-        });
         
+        //Creates meetup form in the correct spot
         function addMeetUp(){
             for(i=1; i<10; i++){
                 var meetupRow = $('#meet-ups'+i);
@@ -236,6 +249,7 @@
             }
         }
         
+        //Mark a meetup as fully filled out and ready to be generated into template
         function submitMeetup(meetNum){
             var meetContainer  = $('#meet-up'+meetNum)[0];
             
@@ -253,7 +267,7 @@
             var daysOfWeek =  ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             
             
-            //block Form
+            //block form so it cannot be edited after marked complete
             $.blockUI.defaults.unblockMsg = '<h4 class="unblockBtn" id="'+meetNum+'">Edit</h4>';
             $('div#meet-up'+meetNum+' .block-cover').block({message:"<h3>Completed</h3>"});
             
@@ -303,6 +317,7 @@
             
         };
         
+        //Allow editing of meetup details
         function unsubmitMeetup(meetNum){
             var meetContainer  = $('#meet-up'+meetNum);
             $('div#meet-up'+meetNum + ' .block-cover').unblock();
@@ -312,6 +327,7 @@
             }
         }
         
+        //Clear all fields for that meetup
         function clearInputFields(meetNum){
             var Inputs = $('#meet-up'+meetNum+' input');
             Inputs.push($('#meet-up'+meetNum+' textarea')[0]);
@@ -320,6 +336,7 @@
             });
         }
         
+        
         function getWeeklyMessage(){
             var enteredMessage = $('#weeklyMessage')[0].value;
             var wholeMessage = "Hey everyone,<br /><br />" + enteredMessage +"<br /><br />Thanks and have a great week!<br />Deyan";
@@ -327,17 +344,27 @@
             return (enteredMessage.length > 0) ? wholeMessage : "";           
         }
         
+        /*     -     EVENT LISTENERS     -     */    
+            
+        //Event listener for adding a meetup
+        $(document).on('click', '#add-meet-up', function() {
+            addMeetUp();
+        });   
+        
+        //Event listener for locking and unlocking meetup form 
         $('.container').on('click', '.meet-up-ready', function(){
             submitMeetup(this.id);
             })
-            .on('click', '.unblockBtn', function(){
+        .on('click', '.unblockBtn', function(){
             unsubmitMeetup(this.id);
             });
-            
+        
+        //
         $('.container').on('click', '.clear-meetup', function(){
             clearInputFields(this.id);
         });
         
+        //When you click on code preview, it selects it
         $(document).on('click', '#code-preview', function(){ selectText('code-preview'); });    
         
         $(document).on('click', '#generate-html', function(){
@@ -357,7 +384,7 @@
         }); 
         
         
-        
+        //Function for selecting text by clicking on it just once
         function selectText(element) {
             var doc = document
                 , text = doc.getElementById(element)
@@ -569,7 +596,10 @@
                 padding: 0px;
             }
             
-        
+            .datepicker{
+                visibility: hidden;
+                background-color:#00C;
+            }
             
            
             
@@ -594,8 +624,9 @@
                         <div class="col-md-5 col-sm-10">
                             <h2 id="week">The Week Of</h2><input id="week-of" type="date" />
                             <a id="set-week" class="btn btn-sm">Edit</a>
+                            <input class="datepicker" data-provide="datapicker"></input>
                         </div>
-                        <div class=col-md-2">
+                        <div class="col-md-2">
                            
                         </div>
                     </div>
