@@ -111,6 +111,8 @@ var templateCode = function() {
         meetupsList = $.grep(meetupsList, function(e){
             return e.completed == true;
             });
+        
+        meetupsList.sort(sortByDate);
     
         var featuredMeetups = $.grep(meetupsList, function(e){
           return e.featured == true;
@@ -144,6 +146,7 @@ var templateCode = function() {
         
         if(farOutMeetups.length>0){
             meetupCodeBlock += addFarOutHeader();
+            regularMeetups
             for(var i=0; (i*2) < farOutMeetups.length; i++){
                 var meetup1 = farOutMeetups[(i*2)];
                 var meetup2 = farOutMeetups[i*2+1] ? farOutMeetups[i*2+1] : null;
@@ -294,6 +297,12 @@ var templateCode = function() {
 
                    return htmlBlock;                          
     }
+
+    function sortByDate(a, b){
+      var aDate = a.eventDate.getTime();
+      var bDate = b.eventDate.getTime(); 
+      return ((aDate < bDate) ? -1 : ((aDate > bDate) ? 1 : 0));
+    } 
 
     this.templateClose = function(){
       var htmlBlock = 

@@ -81,8 +81,8 @@
         var checkFarOut = function(weekDate, meetupDate){
             
             weekDate = new Date(weekDate);
-            var weekDateNumber = weekDate.getDate()+1;
-            var meetupDateNumber = meetupDate.getDate()+1;
+            var weekDateNumber = weekDate.getDate(); 
+            var meetupDateNumber = meetupDate.getDate()+1; //When pulling from Date entry field, it pulls with one day lower than date entered
             var longMonths = [1,3,5,7,8,10,12];
             if(weekDateNumber+7 > meetupDateNumber ){
                 //console.log(weekDate.getMonth()+1);
@@ -191,9 +191,13 @@
                 row.append(insertInputRow( 'event-date', 'date'));
                 
                 row = insertRow(meetupContainer);
+                row.append(insertInputName('Address', 'input-title'));
+                row.append(insertInputRow( 'event-address', 'text'));
+            
+                row = insertRow(meetupContainer);
                 row.append(insertInputName('Event Time', 'input-title'));
                 row.append(insertInputRow('event-time'));
-                
+            
                 row = insertRow(meetupContainer);
                 row.append(insertInputName('Event Description', 'input-title'));
                 var eventDescriptionRow = insertInputTextBox('event-desc');
@@ -215,10 +219,6 @@
                 row = insertRow(meetupContainer);
                 row.append(insertInputName('Featured WMPer', 'input-title'));
                 row.append(insertInputRow('featured-person', 'text'));
-                
-                row = insertRow(meetupContainer);
-                row.append(insertInputName('Address', 'input-title'));
-                row.append(insertInputRow( 'event-address', 'text'));
                 
                 row = insertRow(meetupContainer);
                 row.append($.el('button', {'class':'meet-up-ready col-md-4 col-sm-4 top-buffer', 'id':meetNum}, 'Submit')).append($.el('button', {'class':'clear-meetup col-md-4 col-sm-4 top-buffer', 'id':meetNum}, 'Clear Entries'));  
@@ -293,10 +293,10 @@
                 }
                 else{
                     
-                    weekOf = new Date(timeNow.getFullYear(), timeNow.getMonth()+1, weekOfDate);
+                    weekOf = new Date(timeNow.getFullYear(), timeNow.getMonth(), weekOfDate);
                     
                 }
-                $('#week')[0].innerText += ' '+weekOf.getMonth()+'/'+weekOf.getDate();
+                $('#week')[0].innerText += ' '+(weekOf.getMonth()+1)+'/'+weekOf.getDate();
                 $('#week').css('padding-right', '0px');
             }
             
