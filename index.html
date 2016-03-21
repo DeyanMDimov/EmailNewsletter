@@ -6,6 +6,7 @@
         <title></title>
         <link rel="stylesheet"href="css/bootstrap.css">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <!-- Place favicon.ico in the root directory -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.3.min.js"><\/script>')</script>
@@ -13,6 +14,7 @@
         <script src="js/jquery.blockUI.js" type="text/javascript"></script>
         <script src="js/code-blocks.js" type="text/javascript"></script>
         <script src='js/db.js'></script>
+        <script src='js/moment.min.js'></script>
         <!--<script src='js/meetup-database.js'></script>-->
         <script type="text/javascript"> 
         $( 
@@ -31,6 +33,7 @@
         
         //Declare basic variables
         var weekOf;   
+        var dateOfThisWeek;
         var numberOfMeetups;
         var meetups = [];
         var container = $('.col-md-12#form');
@@ -57,6 +60,51 @@
             defaults.centerY = false;
             
         }();
+            
+        function setWeek(direction){ //direction equals -1 or 1 
+            var timeNow = moment(); 
+            var dayOfWeek = moment().format('e')-1;
+            
+            if(dateOfThisWeek == null){
+                if(dayOfWeek >= 0 && dayOfWeek < 3){
+                        dateOfThisWeek = moment().subtract(dayOfWeek, 'days');
+                    }
+                else{
+                        dateOfThisWeek = moment().add(7 - dayOfWeek, 'days');
+                    }
+            }
+            
+            if(direction != null){
+               
+                if(weekOf == null){
+                    console.log("weekOf never specified");
+                }
+                else{
+                    if(direction > 0){
+                        newWeekOf = moment(weekOf).add(7, 'days');
+                        $('.prev-week').removeClass("disabled");
+                        }
+                    else{
+                        newWeekOf = moment(weekOf).subtract(7, 'days');
+                        if(moment(newWeekOf).format('l') == moment(dateOfThisWeek).format('l')){
+                            $('.prev-week').addClass('disabled');
+                            }
+                        }
+                    var weekHeading = $('#week')[0].innerText.replace(moment(weekOf).format('M/D'), moment(newWeekOf).format('M/D'));
+                    $('#week')[0].innerText = weekHeading;
+                    weekOf = newWeekOf;
+                    }
+                }
+            else{
+                weekOf = dateOfThisWeek;
+                $('#week')[0].innerText += ' ' + moment(weekOf).format('M/D');
+                }
+            
+            $('#week').css('padding-right', '0px');  
+                    
+            };
+            setWeek();
+            
             
         //Meetup Constructor
         var meetup = function(name, event, eventType, date, address, description, id, featured, featuredPerson, url, eventImage) {
@@ -189,14 +237,14 @@
                 row = insertRow(meetupContainer);
                 row.append(insertInputName('Event Date','input-title'));
                 row.append(insertInputRow( 'event-date', 'date'));
-                
-                row = insertRow(meetupContainer);
-                row.append(insertInputName('Address', 'input-title'));
-                row.append(insertInputRow( 'event-address', 'text'));
             
                 row = insertRow(meetupContainer);
                 row.append(insertInputName('Event Time', 'input-title'));
                 row.append(insertInputRow('event-time'));
+            
+                row = insertRow(meetupContainer);
+                row.append(insertInputName('Address', 'input-title'));
+                row.append(insertInputRow( 'event-address', 'text'));
             
                 row = insertRow(meetupContainer);
                 row.append(insertInputName('Event Description', 'input-title'));
@@ -225,14 +273,6 @@
                 
                  
         };
-        
-        $('#set-week').click(function() {
-            var w33k = $('.datepicker');
-            w33k.css({visibility:'visible'});
-            w33k.datepicker();
-            
-        });
-        
         
         //Creates meetup form in the correct spot
         function addMeetUp(){
@@ -273,31 +313,6 @@
             
             if(groupName != null && groupName != ""){
                 $('#'+ meetContainer.id +' .meetupNum')[0].innerText = meetNum + '. ' + groupName;
-            }
-            
-            if(weekOf == null){
-                var timeNow = new Date($.now());
-                var dayOfWeek = timeNow.getDay()-1;
-                var weekOfDate;
-                if(dayOfWeek >= 0 && dayOfWeek <3){
-                    weekOfDate = timeNow.getDate() - dayOfWeek;
-                }
-                else{
-                    weekOfDate = timeNow.getDate() + 7 - dayOfWeek;
-                }
-                if(weekOfDate < 0){
-                    var d= new Date(timeNow.getFullYear(), timeNow.getMonth()+1, 0);
-                    var startOfWeek_Date = d.getDate()-weekOfDate;
-                    weekOf = new Date(timeNow.getFullYear(), timeNow.getMonth(), startOfWeek_Date);
-                    
-                }
-                else{
-                    
-                    weekOf = new Date(timeNow.getFullYear(), timeNow.getMonth(), weekOfDate);
-                    
-                }
-                $('#week')[0].innerText += ' '+(weekOf.getMonth()+1)+'/'+weekOf.getDate();
-                $('#week').css('padding-right', '0px');
             }
             
             var submittedNewMeetup = new meetup(groupName, eventTitle, eventType, eventDate, eventAddress, eventDesc, meetNum, eventFeatured, eventFeaturedPerson, eventMoreInfo, eventImage);
@@ -364,6 +379,9 @@
             clearInputFields(this.id);
         });
         
+        $(document).on('click', '.prev-week', function(){ if($('.prev-week').hasClass('disabled')){return null; }
+                                                            else{setWeek(-1);}});
+        $(document).on('click', '.next-week', function(){ setWeek(1); });
         //When you click on code preview, it selects it
         $(document).on('click', '#code-preview', function(){ selectText('code-preview'); });    
         
@@ -434,6 +452,7 @@
             #week{
                 display:inline-block;
                 padding: 0 30px 0  0;
+                width:300px;
             }
             #week-of{visibility: hidden; display:none;}
             #set-week{
@@ -601,6 +620,13 @@
                 background-color:#00C;
             }
             
+            .fa{
+                font-size:1.5em;
+            }
+            .disabled{
+                color: #AAA;
+            }
+            
            
             
         </style>
@@ -621,9 +647,10 @@
             <div class="row col-md-10 col-md-offset-1 col-sm-10">
                 <div class="col-md-12 col-sm-12 container" id="form">
                     <div class="row"> 
-                        <div class="col-md-5 col-sm-10">
+                        <div class="col-md-6 col-sm-10">
                             <h2 id="week">The Week Of</h2><input id="week-of" type="date" />
-                            <a id="set-week" class="btn btn-sm">Edit</a>
+                            <i class="fa fa-chevron-circle-left prev-week disabled"></i>
+                            <i class="fa fa-chevron-circle-right next-week"></i>
                             <input class="datepicker" data-provide="datapicker"></input>
                         </div>
                         <div class="col-md-2">
