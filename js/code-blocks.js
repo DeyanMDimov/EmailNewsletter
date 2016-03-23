@@ -92,7 +92,7 @@ var templateCode = function() {
   <table class="body"><tr><td class="center" align="center" valign="top"><center>\
           <table class="row" style="background: #082952;"><tr style="background: #082952;"><td class="center header" align="center"><center>\
               <table class="container"><tr><td class="wrapper last">\
-                  <table class="twelve columns"><tr><td class="six sub-columns"><img src="wmpLogo.png"></td><td class="six sub-columns last" style="text-align:right; vertical-align:middle;"><span class="template-label">TECHNOLOGY</span></td><td class="expander"></td></tr></table>\
+                  <table class="twelve columns"><tr><td class="six sub-columns"><img src="http://www.westmonroepartners.com/assets/Main/img/wmp_logo.png" height="50"></td><td class="six sub-columns last" style="text-align:right; vertical-align:middle;"><span class="template-label">TECHNOLOGY</span></td><td class="expander"></td></tr></table>\
               </td></tr></table>\
           </center></td></tr></table>\
             <br>\

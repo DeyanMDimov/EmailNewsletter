@@ -15,6 +15,7 @@
         <script src="js/code-blocks.js" type="text/javascript"></script>
         <script src='js/db.js'></script>
         <script src='js/moment.min.js'></script>
+        <script src='js/FileSaver.js'></script>
         <!--<script src='js/meetup-database.js'></script>-->
         <script type="text/javascript"> 
         $( 
@@ -398,6 +399,8 @@
                 html = html.concat(value);
             });
             previewContainer.text(html);
+            var blob = new Blob([html], {type: "text/plain;charset=utf-8"});
+            saveAs(blob, 'Meetups-Template.html');
             
         }); 
         
@@ -420,7 +423,7 @@
                 selection.addRange(range);
             }
         }
-        
+            
        
         });
         </script>
@@ -667,7 +670,8 @@
                         <div class="col-md-8 col-sm-12">
                     
                             <button id="add-meet-up" class="btn" >Add Meetup</button>
-                            <button id="generate-html" class="btn" >Generate</button><br /><br />
+                            <button id="generate-html" class="btn" >Generate</button>
+                            <button id="download-html" class="btn" >Download</button><br /><br />
                            
                         </div>
                     </div>
