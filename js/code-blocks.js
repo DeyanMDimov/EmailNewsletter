@@ -2,7 +2,7 @@
 $(
   function($){
 
-var templateCode = function() {
+ $.templateCode = function() {
   
     this.htmlBlocks = [];
 
@@ -324,5 +324,5 @@ var templateCode = function() {
     };
 
 
-    $.templateCode = new templateCode();
+    
 });

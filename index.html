@@ -13,9 +13,9 @@
         <script src="js/bootstrap.min.js"></script>
         <script src="js/jquery.blockUI.js" type="text/javascript"></script>
         <script src="js/code-blocks.js" type="text/javascript"></script>
-        <script src='js/db.js'></script>
         <script src='js/moment.min.js'></script>
         <script src='js/FileSaver.js'></script>
+        <script src='meetupAPI.js'></script>
         <!--<script src='js/meetup-database.js'></script>-->
         <script type="text/javascript"> 
         $( 
@@ -31,6 +31,9 @@
                     return $el;
                 }
             });
+            
+            var templateCode = new $.templateCode();
+            var meetupAPI = new $.meetupAPI();
         
         //Declare basic variables
         var weekOf;   
@@ -386,14 +389,16 @@
         //When you click on code preview, it selects it
         $(document).on('click', '#code-preview', function(){ selectText('code-preview'); });    
         
+        $(document).on('click', '#APITEST', function(){meetupAPI.send(); });
+            
         $(document).on('click', '#generate-html', function(){
             var previewContainer = $('#code-preview');
-            $.templateCode.setWeeklyMessage(getWeeklyMessage());
-            $.templateCode.generateMeetups($.grep(meetups, function(e){
+            templateCode.setWeeklyMessage(getWeeklyMessage());
+            templateCode.generateMeetups($.grep(meetups, function(e){
                 return e.completed == true;
             }));
-            $.templateCode.templateClose();
-            var htmlBlocks = $.templateCode.htmlBlocks;
+            templateCode.templateClose();
+            var htmlBlocks = templateCode.htmlBlocks;
             var html='';
             $.each(htmlBlocks, function(index, value){
                 html = html.concat(value);
@@ -671,7 +676,7 @@
                     
                             <button id="add-meet-up" class="btn" >Add Meetup</button>
                             <button id="generate-html" class="btn" >Generate/Download</button><br /><br />
-                           
+                            <button id="APITEST" class="btn" >Test API</button>
                         </div>
                     </div>
                 </div>
