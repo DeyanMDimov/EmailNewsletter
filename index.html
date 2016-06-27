@@ -7,6 +7,7 @@
         <link rel="stylesheet"href="css/bootstrap.css">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/font-awesome.css">
         <!-- Place favicon.ico in the root directory -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.3.min.js"><\/script>')</script>
@@ -41,6 +42,7 @@
         var numberOfMeetups;
         var meetups = [];
         var container = $('.col-md-12#form');
+        var onlineAvailableMeetups = [];
         var setBlockingStyle = function(){
             
             var defaults = $.blockUI.defaults;
@@ -363,6 +365,44 @@
             return (enteredMessage.length > 0) ? wholeMessage : "";           
         }
         
+        function getAvailableMeetups(){
+            var meetups;
+            meetupAPI.send(meetups)
+            .done(function(meetupList){
+                    var responseMessage;
+                        if (meetupList.data.length > 0){
+                        responseMessage = meetupList.data.length + ' meetups available.';
+                        $.each(meetupList.data, function(index, meetup){
+                        if(index < 20){
+                            createAvailableMeetup(meetup);
+                            console.log(responseMessage);
+                        }
+                        });
+                    }
+                    else{
+                        responseMessage = "No additional meetups";
+                    }
+            });
+            
+            
+        }
+        
+        function createAvailableMeetup(meetup){
+            
+            var meetupDiv = $.el('div', {'class':'avail-meetup col-md-12'});
+            var meetupCheckBox = $.el('p', {'class':'avail-checkbox col-md-1'}).append($.el('i', {'class':'fa fa-square-o fa-3'}));
+            var meetupGroupAndTitle = $.el('p', {'class':'avail-meetup-group col-md-8'}).append(meetup.group.name, '<br>', $.el('span', {'class':'avail-meetup-title'}).append(meetup.name));
+            
+            var meetupDateTime = $.el('p', {'class':'avail-meetup-time'}).append(new Date(meetup.time).toDateString(), '<br />', $.el('a', {'href':meetup.link}).append("More info"));
+            
+            meetupDiv.append(meetupCheckBox, meetupGroupAndTitle, meetupDateTime);
+            meetupDiv.context.meetup = meetup;
+            
+            $('#available-meetups').append(meetupDiv);
+            
+            onlineAvailableMeetups.push(meetup);
+                
+        }
         /*     -     EVENT LISTENERS     -     */    
             
         //Event listener for adding a meetup
@@ -389,8 +429,22 @@
         //When you click on code preview, it selects it
         $(document).on('click', '#code-preview', function(){ selectText('code-preview'); });    
         
-        $(document).on('click', '#APITEST', function(){meetupAPI.send(); });
+        $(document).on('click', '#view-meetups', function(){getAvailableMeetups(); });
+        
+        $(document).on('click', '.avail-meetup', function(){
+            var clickedMeetup = this.meetup;
+            clickedMeetup.completed = (clickedMeetup.completed || false);
+            clickedMeetup.completed = !clickedMeetup.completed;
+            if (clickedMeetup.completed){
+            $(this).find('.fa-square-o').removeClass('fa-square-o').addClass('fa-check-square-o');
+            } else {
+            $(this).find('.fa-check-square-o').removeClass('fa-check-square-o').addClass('fa-square-o');
+            }
+            if(meetups.indexOf(clickedMeetup)== -1)
+            meetups.push(this.meetup);
             
+        });
+               
         $(document).on('click', '#generate-html', function(){
             var previewContainer = $('#code-preview');
             templateCode.setWeeklyMessage(getWeeklyMessage());
@@ -529,7 +583,7 @@
             .unblockBtn{font-weight: 300;
                         cursor: pointer;
                         }
-            #add-meet-up, #generate-html{
+            .btn{
                 margin-top: 20px;
                 font-size: 20px;
                 width: 200px;
@@ -539,6 +593,10 @@
                 border-bottom: solid 2px #454545;
                 /*padding: 9px 24px 6px 13px;*/
                 
+            }
+            
+            #view-meetups{
+                font-size:16px;
             }
             .meetup .container-fluid{
                 background-color:#ddd; 
@@ -609,6 +667,46 @@
                
             }
             
+            .avail-meetup{
+                margin: 20px 0 0;
+                border: solid 1px #454545;
+                height: 80px;
+            }
+            
+            .avail-meetup p{
+                margin-bottom: 0;
+                padding: 0;
+                
+            }
+            
+            .avail-meetup-group{
+                position: relative;
+                font-size: 14px;
+                top: 50%;
+                -webkit-transform: translateY(-50%);
+                -ms-transform: translateY(-50%);
+                transform: translateY(-50%);
+                
+            }
+            
+            .avail-meetup-title{
+                font-size: 18px;
+            }
+            
+            .avail-meetup-time{
+                margin-top:16px;
+            }
+            
+            .avail-checkbox{
+                height: 70px;
+            }
+            
+            .avail-checkbox i{
+                vertical-align: middle;
+                font-size: 2em;
+                margin-top: 25px;
+            }
+            
             #code-preview{ margin-top: 20px;
                            height: 200px;
                            overflow: scroll;
@@ -659,24 +757,30 @@
                             <h2 id="week">The Week Of</h2><input id="week-of" type="date" />
                             <i class="fa fa-chevron-circle-left prev-week disabled"></i>
                             <i class="fa fa-chevron-circle-right next-week"></i>
-                            <input class="datepicker" data-provide="datapicker"></input>
                         </div>
                         <div class="col-md-2">
                            
                         </div>
                     </div>
-                    <div class="row top-buffer">
+                    <div class="row">
                         <div class="col-md-12 col-sm-12">
                             <h3 id="weeklyMsg-title">Weekly Message</h3>
                              <textarea id="weeklyMessage" class="input-style"></textarea>
                         </div>
-                     </div>
-                     <div class="row">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <button id="view-meetups" class="btn" >View Available Meetups</button>
+                            <div class="col-md-12" id="available-meetups">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-8 col-sm-12">
                     
-                            <button id="add-meet-up" class="btn" >Add Meetup</button>
+                            <button id="add-meet-up" class="btn" >Add Event</button>
                             <button id="generate-html" class="btn" >Generate/Download</button><br /><br />
-                            <button id="APITEST" class="btn" >Test API</button>
                         </div>
                     </div>
                 </div>

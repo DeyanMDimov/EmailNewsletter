@@ -4,21 +4,18 @@ $(
         $.meetupAPI = function(){
             
             var test;
-            this.send = function(){$.ajax({
+            this.send = function(callback){
+                return $.ajax({
                     url: 'https://api.meetup.com/self/calendar?key=305178f5e17282a2262507d3c503535&sign=true',
                     dataType: 'jsonp',
                     success: function(listOfMeetups){
-                        test = listOfMeetups;
-                        console.log('Nice!');
-                        sillyFunction();
-                        }
-                    
-                
                         
-                    
-                });
+                        console.log('Nice!');
+                        callback = listOfMeetups;
+                        }                    
+                }); };
                                    
-            }
+            
             var sillyFunction = function(){
                 this.meetupsArray = test;
             }
