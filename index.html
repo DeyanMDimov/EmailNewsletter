@@ -8,6 +8,7 @@
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="css/font-awesome.css">
+        <link rel="stylesheet" href="css/mainstyle.css">
         <!-- Place favicon.ico in the root directory -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.3.min.js"><\/script>')</script>
@@ -74,10 +75,10 @@
             if(dateOfThisWeek == null){
                 if(dayOfWeek >= 0 && dayOfWeek < 3){
                         dateOfThisWeek = moment().subtract(dayOfWeek, 'days');
-                    }
+                }
                 else{
                         dateOfThisWeek = moment().add(7 - dayOfWeek, 'days');
-                    }
+                }
             }
             
             if(direction != null){
@@ -275,9 +276,7 @@
                 row.append(insertInputRow('featured-person', 'text'));
                 
                 row = insertRow(meetupContainer);
-                row.append($.el('button', {'class':'meet-up-ready col-md-4 col-sm-4 top-buffer', 'id':meetNum}, 'Submit')).append($.el('button', {'class':'clear-meetup col-md-4 col-sm-4 top-buffer', 'id':meetNum}, 'Clear Entries'));  
-                
-                 
+                row.append($.el('button', {'class':'meet-up-ready col-md-4 col-sm-4 top-buffer', 'id':meetNum}, 'Submit')).append($.el('button', {'class':'clear-meetup col-md-4 col-sm-4 top-buffer', 'id':meetNum}, 'Clear Entries'));        
         };
         
         //Creates meetup form in the correct spot
@@ -334,8 +333,6 @@
                
                 meetups[submittedNewMeetup.id - 1] = submittedNewMeetup;
             }
-           
-            
         };
         
         //Allow editing of meetup details
@@ -365,19 +362,21 @@
             return (enteredMessage.length > 0) ? wholeMessage : "";           
         }
         
-        function getAvailableMeetups(){
+        function getAvailableMeetups(_callback){
             var meetups;
             meetupAPI.send(meetups)
             .done(function(meetupList){
                     var responseMessage;
-                        if (meetupList.data.length > 0){
+                    if (meetupList.data.length > 0){
                         responseMessage = meetupList.data.length + ' meetups available.';
                         $.each(meetupList.data, function(index, meetup){
-                        if(index < 20){
-                            createAvailableMeetup(meetup);
-                            console.log(responseMessage);
-                        }
+                            if(index < 20){
+                                createAvailableMeetup(meetup);
+                                console.log(responseMessage);
+                            }
+                    
                         });
+                        _callback();
                     }
                     else{
                         responseMessage = "No additional meetups";
@@ -393,15 +392,24 @@
             var meetupCheckBox = $.el('p', {'class':'avail-checkbox col-md-1'}).append($.el('i', {'class':'fa fa-square-o fa-3'}));
             var meetupGroupAndTitle = $.el('p', {'class':'avail-meetup-group col-md-8'}).append(meetup.group.name, '<br>', $.el('span', {'class':'avail-meetup-title'}).append(meetup.name));
             
-            var meetupDateTime = $.el('p', {'class':'avail-meetup-time'}).append(new Date(meetup.time).toDateString(), '<br />', $.el('a', {'href':meetup.link}).append("More info"));
+            var meetupDateTime = $.el('p', {'class':'avail-meetup-time'}).append(new Date(meetup.time).toDateString(), '<br />', $.el('a', {'href':meetup.link, 'target':'_blank'}).append("More info"));
+
+            var meetupDateTime
             
             meetupDiv.append(meetupCheckBox, meetupGroupAndTitle, meetupDateTime);
             meetupDiv.context.meetup = meetup;
             
             $('#available-meetups').append(meetupDiv);
             
-            onlineAvailableMeetups.push(meetup);
+            onlineAvailableMeetups.push(meetup); 
                 
+        }
+
+        function removeUnselectedMeetups(){
+            var meetupsToRemove = $('.avail-meetup').not('.selected');
+            meetupsToRemove.addClass('unselected');
+           
+            
         }
         /*     -     EVENT LISTENERS     -     */    
             
@@ -429,7 +437,16 @@
         //When you click on code preview, it selects it
         $(document).on('click', '#code-preview', function(){ selectText('code-preview'); });    
         
-        $(document).on('click', '#view-meetups', function(){getAvailableMeetups(); });
+        $(document).on('click', '#view-meetups', function(){
+            getAvailableMeetups(function(){
+                $('#available-meetups').css('max-height', '2100px').append($.el('button', {'class':'btn', 'id':'filter-avail-meetups'}, 'Filter Unselected'));
+
+            });
+         });
+
+        $(document).on('click', '#filter-avail-meetups', function(){
+            removeUnselectedMeetups();
+        });
         
         $(document).on('click', '.avail-meetup', function(){
             var clickedMeetup = this.meetup;
@@ -437,12 +454,18 @@
             clickedMeetup.completed = !clickedMeetup.completed;
             if (clickedMeetup.completed){
             $(this).find('.fa-square-o').removeClass('fa-square-o').addClass('fa-check-square-o');
+            $(this).addClass('selected');
             } else {
             $(this).find('.fa-check-square-o').removeClass('fa-check-square-o').addClass('fa-square-o');
+            $(this).removeClass('selected');
             }
             if(meetups.indexOf(clickedMeetup)== -1)
             meetups.push(this.meetup);
             
+        });
+        //prevent item from being selected when clicking link
+        $(document).on('click', '.avail-meetup-time a', function(e){
+            e.stopPropagation();
         });
                
         $(document).on('click', '#generate-html', function(){
@@ -463,6 +486,7 @@
             
         }); 
         
+
         
         //Function for selecting text by clicking on it just once
         function selectText(element) {
@@ -487,251 +511,6 @@
         });
         </script>
         <style>
-            body{
-                background-color: #F5F5F5;
-                
-            }
-            * {
-                font-family:  'HelveticaNeue-Light', 'Helvetica Nueu Light', Helvetica, 'Segoe UI', Calibri, sans-serif;
-            }
-/*            .col-sm-12{
-                float:none !important;
-            }*/
-            
-            .form-title{
-                background-color: #082952;
-                color: #FFB91C;
-            }
-            .form-title span{
-                color: #F5F5F5;
-            }
-            .form-title h2, .form-title h2 span{
-                font-family: 'Helvetica Neue Light', Helvetica, 'Segoe UI', Calibri, sans-serif !important;
-            }
-            #main{
-                margin-top: 0px;
-            }
-            #week{
-                display:inline-block;
-                padding: 0 30px 0  0;
-                width:300px;
-            }
-            #week-of{visibility: hidden; display:none;}
-            #set-week{
-                margin-top: 30px;
-                padding: 5px 5px 5px 5px;
-                background: none;
-                color: #ccc;
-                font-size:12px;
-                float:right;
-            }
-            #set-week:hover{
-                color:#999;
-            }
-            
-            #input-title{
-                color:#666;
-                display: block;
-                float: none;
-                margin: 5px auto 2px;
-                padding: 0 5px;
-                font-size:16px;
-            }
-            
-            .input-style{
-                border: none;
-                background-color: #d6d6d6;
-                border-bottom: solid 3px #454545;
-            }
-            
-            #event-desc{
-                height:150px;
-                display: block;
-                float: none;
-                margin:5px auto;
-                border: none;
-                border-radius: 4px;
-                color:#333;
-                padding: 8px 10px;
-            }
-            .input-style:focus{
-                background-color:#E0E0E0;
-                outline:none;
-            }
-            
-            #weeklyMsg-title{
-                margin-bottom:5px;
-                margin-top:5px;
-                padding-left:1px;
-            }
-            
-            
-            
-            #weeklyMessage{
-                width: 100%; 
-                height: 100px;
-                padding:10px 13px;
-                border-radius: 3px;
-            }
-            .top-buffer{margin-top: 10px;}
-            .big-buffer{margin-top: 25px;}
-            
-            .btn{
-                border-radius:3px;
-            }
-            
-            .unblockBtn{font-weight: 300;
-                        cursor: pointer;
-                        }
-            .btn{
-                margin-top: 20px;
-                font-size: 20px;
-                width: 200px;
-                margin-right: 25px;
-                background: solid;
-                background-color:#E0E0E0;
-                border-bottom: solid 2px #454545;
-                /*padding: 9px 24px 6px 13px;*/
-                
-            }
-            
-            #view-meetups{
-                font-size:16px;
-            }
-            .meetup .container-fluid{
-                background-color:#ddd; 
-                color:#fff;
-                border-radius: 7px;
-            }
-            
-            .meetup-container{
-                
-            }
-            
-            .meetup-header{
-                border-radius: 7px 7px 0 0;
-                background-color: #082952;
-                padding: 10px;
-            }
-            
-            .meetup-top-row{
-                padding-top: 10px;
-            }
-            
-            .meetup row{
-                height:30px;
-            }
-            
-            .meetup .container-fluid input{
-                color:#111;
-                display:block;
-                margin: 5px auto;
-                float: none;
-                padding: 8px 10px;
-                border: none;
-                border-radius:3px;
-            }
-            
-            .meetup-top-row input{
-/*                margin-top: 0 !important;*/
-            }
-            
-            .meet-up-ready, .clear-meetup{
-                color:#111;
-                margin: 15px 0 20px;
-                border:none;
-                border-radius: 3px; 
-                margin-left: 13.2%;
-                font-size:16px;
-                padding: 10px;
-                background-color: #3B6190;
-                color: #fff;
-            }
-            
-            .clear-meetup{
-                margin-left:6.6%;
-                color: #999;
-                background: none;
-                
-                
-            }
-            
-            .meetupNum{
-                margin-left: -10px;
-                margin-top: 0px;
-                margin-bottom:0px;
-                font-size:27px;
-            }
-            
-            #bottom-buttons{
-               
-            }
-            
-            .avail-meetup{
-                margin: 20px 0 0;
-                border: solid 1px #454545;
-                height: 80px;
-            }
-            
-            .avail-meetup p{
-                margin-bottom: 0;
-                padding: 0;
-                
-            }
-            
-            .avail-meetup-group{
-                position: relative;
-                font-size: 14px;
-                top: 50%;
-                -webkit-transform: translateY(-50%);
-                -ms-transform: translateY(-50%);
-                transform: translateY(-50%);
-                
-            }
-            
-            .avail-meetup-title{
-                font-size: 18px;
-            }
-            
-            .avail-meetup-time{
-                margin-top:16px;
-            }
-            
-            .avail-checkbox{
-                height: 70px;
-            }
-            
-            .avail-checkbox i{
-                vertical-align: middle;
-                font-size: 2em;
-                margin-top: 25px;
-            }
-            
-            #code-preview{ margin-top: 20px;
-                           height: 200px;
-                           overflow: scroll;
-            }
-            #footer{
-                display: block;
-                margin: 10px auto;
-                height: 200px;
-                width: 400px;
-                list-style-type: none;
-                text-align: center;
-                padding: 0px;
-            }
-            
-            .datepicker{
-                visibility: hidden;
-                background-color:#00C;
-            }
-            
-            .fa{
-                font-size:1.5em;
-            }
-            .disabled{
-                color: #AAA;
-            }
             
            
             
